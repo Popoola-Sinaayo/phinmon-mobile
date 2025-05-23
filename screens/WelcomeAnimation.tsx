@@ -1,15 +1,18 @@
 import { StyleSheet, Text, View } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import useGetColor from "../hooks/useGetColor";
 import Logo from "../assets/svg/Logo";
 import Animated, {
+  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withDelay,
   withTiming,
 } from "react-native-reanimated";
+import { useNavigation } from "@react-navigation/native";
 
 const WelcomeAnimation = () => {
+  const navigation = useNavigation();
   const firstAnimation = useSharedValue(5000);
   const secondAnimation = useSharedValue(5000);
   const thirdAnimation = useSharedValue(5000);
@@ -17,6 +20,7 @@ const WelcomeAnimation = () => {
   const fifthAnimation = useSharedValue(5000);
   const sixthAnimation = useSharedValue(5000);
   const seventhAnimation = useSharedValue(5000);
+  const [navigate, setNavigate] = useState(false);
 
   const firstAnimationStyle = useAnimatedStyle(() => {
     return {
@@ -89,8 +93,23 @@ const WelcomeAnimation = () => {
     fourthAnimation.value = withDelay(800, withTiming(0, { duration: 1000 }));
     fifthAnimation.value = withDelay(900, withTiming(0, { duration: 1000 }));
     sixthAnimation.value = withDelay(1000, withTiming(0, { duration: 1000 }));
-    seventhAnimation.value = withDelay(1100, withTiming(0, { duration: 1000 }));
-  }, [])
+    seventhAnimation.value = withDelay(
+      1100,
+      withTiming(0, { duration: 1000 }, () => {
+        console.log("Animation completed");
+        runOnJS(setNavigate)(true);
+      })
+    );
+  }, []);
+
+  useEffect(() => {
+    if (!navigate) return;
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "GetStarted" }],
+    });
+  }, [navigate]);
+
   return (
     <View
       style={{
