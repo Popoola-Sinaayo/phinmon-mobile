@@ -125,7 +125,7 @@ const WelcomeAnimation = () => {
         {/* <Animated.Text> */}
         <Animated.Text
           style={[
-            { color: "white", fontSize: 25, fontWeight: 600 },
+            { color: "white", fontSize: 35, fontWeight: 600 },
             firstAnimationStyle,
           ]}
         >
@@ -133,7 +133,7 @@ const WelcomeAnimation = () => {
         </Animated.Text>
         <Animated.Text
           style={[
-            { color: "white", fontSize: 25, fontWeight: 600 },
+            { color: "white", fontSize: 35, fontWeight: 600 },
             secondAnimationStyle,
           ]}
         >
@@ -141,7 +141,7 @@ const WelcomeAnimation = () => {
         </Animated.Text>
         <Animated.Text
           style={[
-            { color: "white", fontSize: 25, fontWeight: 600 },
+            { color: "white", fontSize: 35, fontWeight: 600 },
             thirdAnimationStyle,
           ]}
         >
@@ -149,7 +149,7 @@ const WelcomeAnimation = () => {
         </Animated.Text>
         <Animated.Text
           style={[
-            { color: "white", fontSize: 25, fontWeight: 600 },
+            { color: "white", fontSize: 35, fontWeight: 600 },
             fourthAnimationStyle,
           ]}
         >
@@ -157,7 +157,7 @@ const WelcomeAnimation = () => {
         </Animated.Text>
         <Animated.Text
           style={[
-            { color: "white", fontSize: 25, fontWeight: 600 },
+            { color: "white", fontSize: 35, fontWeight: 600 },
             fifthAnimationStyle,
           ]}
         >
@@ -165,7 +165,7 @@ const WelcomeAnimation = () => {
         </Animated.Text>
         <Animated.Text
           style={[
-            { color: "white", fontSize: 25, fontWeight: 600 },
+            { color: "white", fontSize: 35, fontWeight: 600 },
             sixthAnimationStyle,
           ]}
         >
@@ -173,7 +173,7 @@ const WelcomeAnimation = () => {
         </Animated.Text>
         <Animated.Text
           style={[
-            { color: "white", fontSize: 25, fontWeight: 600 },
+            { color: "white", fontSize: 35, fontWeight: 600 },
             seventhAnimationStyle,
           ]}
         >

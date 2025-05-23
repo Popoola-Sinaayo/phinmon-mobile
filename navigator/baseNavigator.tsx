@@ -10,6 +10,7 @@ const BaseNavigator = () => {
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
+        animation: "slide_from_right",
       }}
     >
       <Stack.Screen name="WelcomeAnimation" component={WelcomeAnimation} />
