@@ -9,3 +9,5 @@ const useGetColor = (item: ThemeKey) => {
         return LightTheme[item]
     }
 }
+
+export default useGetColor

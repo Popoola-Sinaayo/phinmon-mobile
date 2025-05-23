@@ -1,11 +1,9 @@
 export const LightTheme = {
-  background: "#ffffff",
-  text: "#000000",
+  primary: "#7A5FFF",
 };
 
 export const DarkTheme = {
-  background: "#121212",
-  text: "#ffffff",
+  primary: "#7A5FFF",
 };
 
 export type Theme = typeof LightTheme | typeof DarkTheme;
