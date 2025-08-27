@@ -12,18 +12,22 @@ const Button: React.FC<ButtonProps> = ({
     borderRadius = 5,
   paddingTop = 10,
   paddingBottom = 10,
+  width = "100%",
+  onPress,
 }) => {
   return (
     <Pressable
       style={{
-        width: "100%",
+        width,
         backgroundColor,
         borderRadius,
         paddingTop,
         paddingBottom,
         justifyContent: "center",
         alignItems: "center",
+        alignSelf: "center"
       }}
+      onPress={onPress}
     >
       <Typography
         text={text}

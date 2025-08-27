@@ -2,10 +2,10 @@ import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { TypographyProps } from '../types/component'
 
-const Typography: React.FC<TypographyProps> = ({text, color, size, weight, children, marginBottom, marginTop}) => {
+const Typography: React.FC<TypographyProps> = ({text, color, size, weight, children, marginBottom, marginTop, align}) => {
   return (
     <View>
-          <Text style={{ fontSize: size ?? 14, fontWeight: weight ?? "400", color, marginTop, marginBottom }}>{ text ?? children}</Text>
+          <Text style={{ fontSize: size ?? 14, fontWeight: weight ?? "400", color, marginTop, marginBottom, textAlign: align }}>{ text ?? children}</Text>
     </View>
   )
 }

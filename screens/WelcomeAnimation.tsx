@@ -106,7 +106,8 @@ const WelcomeAnimation = () => {
     if (!navigate) return;
     navigation.reset({
       index: 0,
-      routes: [{ name: "GetStarted" }],
+      // routes: [{ name: "GetStarted" }],
+      routes: [{ name: "Onboarding" }],
     });
   }, [navigate]);
 
