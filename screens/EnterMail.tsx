@@ -4,10 +4,30 @@ import Button from "../components/Button";
 import TextInputComponent from "@/components/TextInput";
 import Typography from "@/components/Typography";
 import { useNavigation } from "@react-navigation/native";
+import { useMutation } from "@tanstack/react-query";
+import { showMessage, hideMessage } from "react-native-flash-message";
+import { authenticateUser } from "@/requests/authentication";
 
 const EnterMail = () => {
-    const [email, setEmail] = useState("");
-    const navigation = useNavigation();
+  const [email, setEmail] = useState("");
+  const navigation = useNavigation();
+
+  const authenticateUserMutation = useMutation({
+    mutationFn: authenticateUser,
+    onSuccess: async (data) => {
+      // ✅ invalidate cache to refresh GET request after POST
+      // queryClient.invalidateQueries({ queryKey: ["users"] });
+      console.log("User authenticated:", data);
+      navigation.navigate("EmailOtp", { email });
+    },
+    onError: (error) => {
+      console.error("Authentication error:", error);
+      showMessage({
+        message: "Authentication Failed",
+        type: "danger",
+      });
+    },
+  });
   return (
     <View style={styles.container}>
       <View style={styles.itemContainer}>
@@ -23,8 +43,8 @@ const EnterMail = () => {
           marginVertical={5}
           style={{ paddingVertical: 8 }}
           value={email}
-                  setValue={setEmail}
-                  height={40}
+          setValue={setEmail}
+          height={40}
         />
         <View style={{ width: "100%", marginTop: 10 }}>
           <Button
@@ -34,8 +54,10 @@ const EnterMail = () => {
             width={"100%"}
             backgroundColor="#8C78F2"
             borderRadius={10}
+            isLoading={authenticateUserMutation.isPending}
             onPress={() => {
-              navigation.navigate("EmailOtp");
+              authenticateUserMutation.mutate(email);
+              // navigation.navigate("EmailOtp");
             }}
           />
         </View>

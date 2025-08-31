@@ -1,8 +1,12 @@
 import { StyleSheet, Text, TextInput, View } from "react-native";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Button from "../components/Button";
 import Typography from "@/components/Typography";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { useMutation } from "@tanstack/react-query";
+import { verifyOtpDetails } from "@/requests/authentication";
+import { showMessage } from "react-native-flash-message";
+import { setToken } from "@/utils/storage";
 
 const EnterOtp = () => {
   const navigation = useNavigation();
@@ -20,6 +24,40 @@ const EnterOtp = () => {
   const ref4 = useRef<any>(null);
   const ref5 = useRef<any>(null);
   const ref6 = useRef<any>(null);
+  const route = useRoute()
+  const {email} = route.params as {email: string}
+  const [otpError, setOtpError] = useState(false)
+  const [otpSuccess, setOtpSuccess] = useState(false)
+
+  const verifyOtpMutation = useMutation({
+    mutationFn: verifyOtpDetails,
+    onSuccess: (data) => {
+      console.log("OTP verified:", data);
+      showMessage({
+        message: "OTP Verified Successfully",
+        type: "success",
+      });
+      setOtpSuccess(true)
+      setToken(data.token)
+
+      setTimeout(() => {
+        navigation.navigate("OnboardingDetails");
+      }, 2000);
+    },
+    onError: (error) => {
+      console.error("OTP verification error:", error);
+      setOtpError(true)
+      showMessage({
+        message: "OTP Verification Failed",
+        type: "danger",
+      });
+    },
+  });
+
+  useEffect(() => {
+    setOtpError(false)
+  }, [otps])
+
   return (
     <View style={styles.container}>
       <View style={styles.itemContainer}>
@@ -28,7 +66,11 @@ const EnterOtp = () => {
         </Typography>
         <View style={styles.inputContainer}>
           <TextInput
-            style={[styles.input, styles.successInput]}
+            style={[
+              styles.input,
+              otpError && styles.errorInput,
+              otpSuccess && styles.successInput,
+            ]}
             textAlign="center"
             value={otps.otp1}
             onChangeText={(data) => {
@@ -41,7 +83,11 @@ const EnterOtp = () => {
             keyboardType="number-pad"
           />
           <TextInput
-            style={[styles.input, styles.errorInput]}
+            style={[
+              styles.input,
+              otpError && styles.errorInput,
+              otpSuccess && styles.successInput,
+            ]}
             textAlign="center"
             value={otps.otp2}
             onChangeText={(data) => {
@@ -56,7 +102,11 @@ const EnterOtp = () => {
             ref={ref2}
           />
           <TextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              otpError && styles.errorInput,
+              otpSuccess && styles.successInput,
+            ]}
             textAlign="center"
             ref={ref3}
             value={otps.otp3}
@@ -71,7 +121,11 @@ const EnterOtp = () => {
             keyboardType="number-pad"
           />
           <TextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              otpError && styles.errorInput,
+              otpSuccess && styles.successInput,
+            ]}
             textAlign="center"
             ref={ref4}
             value={otps.otp4}
@@ -86,7 +140,11 @@ const EnterOtp = () => {
             keyboardType="number-pad"
           />
           <TextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              otpError && styles.errorInput,
+              otpSuccess && styles.successInput,
+            ]}
             textAlign="center"
             ref={ref5}
             value={otps.otp5}
@@ -101,7 +159,11 @@ const EnterOtp = () => {
             keyboardType="number-pad"
           />
           <TextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              otpError && styles.errorInput,
+              otpSuccess && styles.successInput,
+            ]}
             textAlign="center"
             ref={ref6}
             value={otps.otp6}
@@ -127,15 +189,25 @@ const EnterOtp = () => {
             width={"100%"}
             backgroundColor="#8C78F2"
             borderRadius={10}
+            isLoading={verifyOtpMutation.isPending}
             onPress={() => {
-              navigation.navigate("OnboardingDetails");
+              // navigation.navigate("OnboardingDetails");
+              verifyOtpMutation.mutate({email, otp: Object.values(otps).join("")});
             }}
           />
         </View>
-        <View style={{marginTop: 10}}>
+        <View style={{ marginTop: 10 }}>
           <Typography weight={700}>
             <Text>Didn't receive the code? </Text>
-            <Text style={{ color: "#8C78F2", textDecorationStyle: "dashed", textDecorationLine: "underline" }}>Send Again</Text>
+            <Text
+              style={{
+                color: "#8C78F2",
+                textDecorationStyle: "dashed",
+                textDecorationLine: "underline",
+              }}
+            >
+              Send Again
+            </Text>
           </Typography>
         </View>
       </View>

@@ -1,14 +1,43 @@
 import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import Typography from "../components/Typography";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../components/Button";
 import { useNavigation } from "@react-navigation/native";
 import TextInputComponent from "@/components/TextInput";
 import CountryInput from "@/components/CountryInput";
+import { useMutation } from "@tanstack/react-query";
+import { onboardUser } from "@/requests/authentication";
+import { showMessage } from "react-native-flash-message";
 
 const OnboardingDetails = () => {
   const navigation = useNavigation();
+  const [details, setDetails] = useState({
+    fullName: "",
+    phoneNumber: "",
+    country: "",
+  });
+  const onboardingDetailsMutation = useMutation({
+    mutationFn: onboardUser,
+    onSuccess: (data) => {
+      console.log("Details updated:", data);
+      showMessage({
+        message: "Details Updated Successfully",
+        type: "success",
+      });
+
+      setTimeout(() => {
+        navigation.navigate("OnboardingBank");
+      }, 2000);
+    },
+    onError: (error) => {
+      console.error("Onboarding details error:", error);
+      showMessage({
+        message: "Onboarding Details Update Failed",
+        type: "danger",
+      });
+    },
+  });
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.firstOverlayContainer} />
@@ -25,8 +54,10 @@ const OnboardingDetails = () => {
           <TextInputComponent
             label="Full Name"
             placeHolder="What should we call you?"
-            value=""
-            setValue={() => {}}
+            value={details.fullName}
+            setValue={(data) => {
+              setDetails((prev) => ({ ...prev, fullName: data }));
+            }}
             borderColor="#E5E5E5"
             placeHolderColor="#B9B9B9"
             labelColor="#484848"
@@ -35,8 +66,10 @@ const OnboardingDetails = () => {
           <TextInputComponent
             label="Phone Number"
             placeHolder="Digits we can text starting with country code"
-            value=""
-            setValue={() => {}}
+            value={details.phoneNumber}
+            setValue={(data) => {
+              setDetails((prev) => ({ ...prev, phoneNumber: data }));
+            }}
             borderColor="#E5E5E5"
             placeHolderColor="#B9B9B9"
             labelColor="#484848"
@@ -46,16 +79,22 @@ const OnboardingDetails = () => {
           <CountryInput
             label="Country"
             placeHolder="Where you at?"
-            setValue={() => {}}
-            value=""
+            setValue={(data) => {
+              console.log(data)
+              setDetails((prev) => ({ ...prev, country: data }));
+            }}
+            value={details.country}
           />
         </View>
         <View style={styles.buttonBottomContainer}>
           <Button
             text="Next"
             width={120}
+            isLoading={onboardingDetailsMutation.isPending}
             backgroundColor="#8C78F2"
-            onPress={() => navigation.navigate("OnboardingBank")}
+            onPress={() => {
+              onboardingDetailsMutation.mutate(details);
+            }}
           />
         </View>
       </View>

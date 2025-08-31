@@ -4,7 +4,9 @@ export type RootStackParamList = {
   Onboarding: undefined;
   WelcomeStarted: undefined;
   EnterMail: undefined;
-  EmailOtp: undefined;
+  EmailOtp: {
+    email: string
+  };
   OnboardingDetails: undefined;
   OnboardingBank: undefined;
 };

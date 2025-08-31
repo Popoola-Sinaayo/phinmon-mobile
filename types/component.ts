@@ -11,6 +11,7 @@ export interface ButtonProps {
   paddingBottom?: number;
   width?: DimensionValue;
   onPress?: () => void;
+  isLoading?: boolean;
 }
 
 export interface TypographyProps {

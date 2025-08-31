@@ -50,10 +50,12 @@ const CountryInput: React.FC<CountryInputProps> = ({
               style={{modal: {marginTop: 60}}}
               lang="en"
               searchMessage=""
-            //   showOnly={["NG"]}
+              showOnly={["NG"]}
         // when picker button press you will get the country object with dial code
               pickerButtonOnPress={(item) => {
-            setShowModal(false)
+                setShowModal(false)
+                console.log(item.name["en"])
+                setValue(item.name["en"]);
           // setCountryCode(item.dial_code);
           // setShow(false);
         }}

@@ -17,3 +17,22 @@ export const setOnboardingUICompleted = async () => {
     console.error("Error setting isOnboarding value:", error);
   }
 };
+
+
+export const setToken = async (token: string) => {
+  try {
+    await AsyncStorage.setItem("token", token);
+  } catch (error) {
+    console.error("Error setting token:", error);
+  }
+};
+
+export const getToken = async () => {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    return token;
+  } catch (error) {
+    console.error("Error getting token:", error);
+    return null;
+  }
+};
