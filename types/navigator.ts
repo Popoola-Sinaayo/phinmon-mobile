@@ -6,6 +6,7 @@ export type RootStackParamList = {
   EnterMail: undefined;
   EmailOtp: undefined;
   OnboardingDetails: undefined;
+  OnboardingBank: undefined;
 };
 
 declare global {

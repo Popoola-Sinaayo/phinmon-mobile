@@ -7,7 +7,7 @@ import { useNavigation } from "@react-navigation/native";
 import TextInputComponent from "@/components/TextInput";
 import CountryInput from "@/components/CountryInput";
 
-const OnboardingDetails = () => {
+const OnboardingBank = () => {
   const navigation = useNavigation();
   return (
     <SafeAreaView style={styles.container}>
@@ -15,47 +15,18 @@ const OnboardingDetails = () => {
       <View style={styles.secondOverlayContainer} />
       <View style={styles.contentContainer}>
         <Typography
-          text="Let’s get to know you 😎"
+          text="Hook up your bank👨‍💼"
           weight={500}
           color="#000000"
           size={28}
           align="center"
         />
-        <View style={styles.formContainer}>
-          <TextInputComponent
-            label="Full Name"
-            placeHolder="What should we call you?"
-            value=""
-            setValue={() => {}}
-            borderColor="#E5E5E5"
-            placeHolderColor="#B9B9B9"
-            labelColor="#484848"
-            height={45}
-          />
-          <TextInputComponent
-            label="Phone Number"
-            placeHolder="Digits we can text starting with country code"
-            value=""
-            setValue={() => {}}
-            borderColor="#E5E5E5"
-            placeHolderColor="#B9B9B9"
-            labelColor="#484848"
-            height={45}
-            type="tel"
-          />
-          <CountryInput
-            label="Country"
-            placeHolder="Where you at?"
-            setValue={() => {}}
-            value=""
-          />
-        </View>
+
         <View style={styles.buttonBottomContainer}>
           <Button
-            text="Next"
-            width={120}
+            text="Connect Account"
+            width={"100%"}
             backgroundColor="#8C78F2"
-            onPress={() => navigation.navigate("OnboardingBank")}
           />
         </View>
       </View>
@@ -63,7 +34,7 @@ const OnboardingDetails = () => {
   );
 };
 
-export default OnboardingDetails;
+export default OnboardingBank;
 
 const styles = StyleSheet.create({
   container: {
@@ -114,10 +85,11 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   buttonBottomContainer: {
-    justifyContent: "flex-end",
-    width: "95%",
-    flexDirection: "row",
-    marginTop: 40,
+    // justifyContent: "flex-end",
+    width: "90%",
+    alignSelf: "center",
+    marginTop: 60
+    // flexDirection: "row"
   },
   buttonContainer: {
     position: "absolute",

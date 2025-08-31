@@ -15,12 +15,16 @@ const EnterMail = () => {
           Get Started
         </Typography>
         <TextInputComponent
-          label=""
+          label="Email"
+          borderColor="#E5E5E5"
+          placeHolderColor="#B9B9B9"
+          labelColor="#484848"
           placeHolder="example@mail.com"
           marginVertical={5}
           style={{ paddingVertical: 8 }}
           value={email}
-          setValue={setEmail}
+                  setValue={setEmail}
+                  height={40}
         />
         <View style={{ width: "100%", marginTop: 10 }}>
           <Button

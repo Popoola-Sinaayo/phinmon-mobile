@@ -15,22 +15,25 @@ const TextInputComponent: React.FC<TextInputComponentProps> = ({
   allowMultipleLine = false,
   numberOfLines,
   style,
+  placeHolderColor = "#B9B9B9",
+  labelColor = "#000000",
+  height,
 }) => {
   return (
     <View style={{ marginVertical, width: "100%" }}>
-      <View style={styles.placeholderContainer}>
-        <Typography align="left" color={"#000000"} weight="600">
-          {label}
-        </Typography>
-      </View>
-      <View>
+      <View style={{ position: "relative" }}>
+        <View style={styles.placeholderContainer}>
+          <Typography align="left" color={labelColor} weight="600">
+            {label}
+          </Typography>
+        </View>
         <TextInput
           style={[
             styles.input,
             {
               borderColor,
               backgroundColor,
-              height: allowMultipleLine ? 150 : 50,
+              height: height || (allowMultipleLine ? 150 : 50),
               ...(allowMultipleLine && {
                 textAlignVertical: "top",
               }),
@@ -39,7 +42,7 @@ const TextInputComponent: React.FC<TextInputComponentProps> = ({
             },
           ]}
           placeholder={placeHolder}
-          placeholderTextColor={"#3C3C3C"}
+          placeholderTextColor={placeHolderColor || "#3C3C3C"}
           value={value}
           onChangeText={(text) => setValue(text)}
           secureTextEntry={type === "password"}
@@ -65,7 +68,13 @@ export default TextInputComponent;
 
 const styles = StyleSheet.create({
   placeholderContainer: {
-    marginBottom: 5,
+    // marginBottom: 5,
+    position: "absolute",
+    backgroundColor: "#FFFFFF",
+    zIndex: 1,
+    top: -10,
+    left: 15,
+    paddingHorizontal: 5,
   },
   input: {
     borderWidth: 1,

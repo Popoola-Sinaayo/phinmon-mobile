@@ -36,4 +36,21 @@ export interface TextInputComponentProps {
   allowMultipleLine?: boolean;
   numberOfLines?: number;
   style?: TextStyle;
+  placeHolderColor?: string;
+  labelColor?: string;
+  height?: number;
+}
+
+export interface CountryInputProps {
+  label: string;
+  placeHolder: string;
+  marginVertical?: number;
+  borderColor?: string;
+  value: string;
+  setValue: (data: string) => void;
+  backgroundColor?: string;
+  style?: TextStyle;
+  placeHolderColor?: string;
+  labelColor?: string;
+  height?: number;
 }

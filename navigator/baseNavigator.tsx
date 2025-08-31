@@ -7,6 +7,7 @@ import WelcomeStarted from "../screens/WelcomeStarted";
 import EnterMail from "../screens/EnterMail";
 import EnterOtp from "@/screens/EnterOtp";
 import OnboardingDetails from "@/screens/OnboardingDetails";
+import OnboardingBank from "@/screens/OnboardingBank";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -25,6 +26,7 @@ const BaseNavigator = () => {
       <Stack.Screen name="EnterMail" component={EnterMail} />
       <Stack.Screen name="EmailOtp" component={EnterOtp} />
       <Stack.Screen name="OnboardingDetails" component={OnboardingDetails} />
+      <Stack.Screen name="OnboardingBank" component={OnboardingBank} />
 
       {/* Add your screens here */}
     </Stack.Navigator>
