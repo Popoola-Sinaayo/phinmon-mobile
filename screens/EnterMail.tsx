@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
 import Button from "../components/Button";
 import TextInputComponent from "@/components/TextInput";
@@ -31,14 +31,15 @@ const EnterMail = () => {
   return (
     <View style={styles.container}>
       <View style={styles.itemContainer}>
-        <Typography weight={600} size={20} color="#6B6B6B">
-          Get Started
-        </Typography>
+        <Image
+          source={require("@/assets/enter-email.png")}
+          style={styles.image}
+        />
         <TextInputComponent
           label="Email"
           borderColor="#E5E5E5"
           placeHolderColor="#B9B9B9"
-          labelColor="#484848"
+          labelColor="#717171"
           placeHolder="example@mail.com"
           marginVertical={5}
           style={{ paddingVertical: 8 }}
@@ -79,10 +80,18 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderRadius: 10,
     padding: 16,
+    paddingVertical: 15,
     //   marginVertical: 8,
     width: "90%",
-    height: "30%",
+    // height: "30%",
     justifyContent: "center",
     alignItems: "center",
+  },
+
+  image: {
+    width: "100%",
+    height: 100,
+    marginBottom: 20,
+    borderRadius: 10
   },
 });

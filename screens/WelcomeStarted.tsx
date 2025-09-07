@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import Typography from "../components/Typography";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -6,7 +6,7 @@ import Button from "../components/Button";
 import { useNavigation } from "@react-navigation/native";
 
 const WelcomeStarted = () => {
-    const navigation = useNavigation();
+  const navigation = useNavigation();
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.firstOverlayContainer} />
@@ -20,10 +20,14 @@ const WelcomeStarted = () => {
           align="center"
         />
         <View style={styles.subTitleContainer}>
+        <Image
+          source={require("@/assets/financial-literacy.png")}
+          style={styles.imageItem}
+        />
           <Typography
-                      text="Get ready to spend 🚀 wisely and learn your income."
-                      align="center"
-                      size={20}
+            text="Get ready to spend 🚀 wisely and learn your income."
+            align="center"
+            size={20}
           />
         </View>
         <View style={styles.buttonContainer}>
@@ -31,9 +35,8 @@ const WelcomeStarted = () => {
             text="Get Started"
             width={"60%"}
             backgroundColor="#8C78F2"
-                      borderRadius={10}
-                      onPress={() => navigation.navigate("EnterMail")}
-                      
+            borderRadius={10}
+            onPress={() => navigation.navigate("EnterMail")}
           />
         </View>
         <View style={styles.privacyTextContainer}>
@@ -60,7 +63,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     width: "100%",
-    height: "80%",
+    height: "95%",
     borderTopRightRadius: 207,
     borderTopLeftRadius: 71,
   },
@@ -69,7 +72,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     width: "100%",
-    height: "78%",
+    height: "93%",
     borderTopLeftRadius: 133,
     borderTopRightRadius: 139,
   },
@@ -78,9 +81,9 @@ const styles = StyleSheet.create({
     bottom: 0,
     // left: 0,
     // right: 0,
-    height: "76%",
+    height: "91%",
     width: "100%",
-    paddingTop: 120,
+    paddingTop: 100,
     backgroundColor: "#ffffff",
     // justifyContent: "center",
     // alignItems: "center",
@@ -103,10 +106,17 @@ const styles = StyleSheet.create({
     // right: 0,
     alignSelf: "center",
   },
-    subTitleContainer: {
-        width: "60%",
-        alignSelf: "center",
-        bottom: 180,
-        position: "absolute"
+  subTitleContainer: {
+    width: "60%",
+    alignSelf: "center",
+    bottom: 180,
+    position: "absolute",
+  },
+
+  imageItem: {
+    alignSelf: "center",
+    width: 250,
+    height: 250,
+    marginBottom: 20,
   },
 });

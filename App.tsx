@@ -9,6 +9,7 @@ import FlashMessage from "react-native-flash-message";
 export default function App() {
   const queryClient = new QueryClient();
   const color = useGetColor("primary");
+  
   return (
     <NavigationContainer>
       <QueryClientProvider client={queryClient}>

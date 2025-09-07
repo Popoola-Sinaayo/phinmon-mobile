@@ -5,10 +5,20 @@ export type RootStackParamList = {
   WelcomeStarted: undefined;
   EnterMail: undefined;
   EmailOtp: {
-    email: string
+    email: string;
   };
   OnboardingDetails: undefined;
   OnboardingBank: undefined;
+  OnboardingBankSuccess: undefined;
+  NavigatorTab: undefined;
+};
+
+export type RootTabParamList = {
+  // Home: undefined;
+  Dashboard: undefined;
+  ChatWithAI: undefined;
+  TransactionHistory: undefined;
+  Analysis: undefined;
 };
 
 declare global {

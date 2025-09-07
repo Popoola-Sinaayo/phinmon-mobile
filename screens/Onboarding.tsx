@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, View } from "react-native";
+import { ImageBackground, Pressable, StyleSheet, View } from "react-native";
 import React, { useState } from "react";
 import OnboardingSlider from "../components/OnboardingSlider";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -30,65 +30,76 @@ const Onboarding = () => {
   ];
   const [currentIndex, setCurrentIndex] = useState<"1" | "2" | "3">("1");
   return (
-    <SafeAreaView style={styles.container}>
-      <OnboardingSlider active={currentIndex} />
-      <View
-        style={[
-          styles.bottomOverlayContainer,
-          {
-            borderTopLeftRadius:
-              currentIndex === "1" ? 175 : currentIndex === "2" ? 34 : 122,
-            borderTopRightRadius:
-              currentIndex === "1" ? 34 : currentIndex === "2" ? 175 : 137,
-          },
-        ]}
-      ></View>
-      <View style={styles.bottomContainer}>
-        <Typography
-          weight={600}
-          color="#4F35CE"
-          size={30}
-          text={items[Number(currentIndex) - 1].title}
-        />
-        <View style={{ marginTop: 10 }}>
-          <Typography
-            text={items[Number(currentIndex) - 1].description}
-            color="#313030"
-            size={24}
-            weight={300}
-          />
-        </View>
+    <ImageBackground
+      style={{ flex: 1,  }}
+      source={
+        currentIndex === "1"
+          ? require("@/assets/demo-1.png")
+          : currentIndex === "2"
+          ? require("@/assets/demo-2.png")
+          : require("@/assets/demo-3.png")
+      }
+    >
+      <SafeAreaView style={styles.container}>
+        <OnboardingSlider active={currentIndex} />
         <View
-          style={{
-            position: "absolute",
-            bottom: 60,
-            width: "100%",
-            justifyContent: "center",
-            alignSelf: "center",
-          }}
-        >
-          <View style={styles.bottomItemContainer}>
-            <Pressable>
-              <Typography text="Skip" size={18} />
-            </Pressable>
-            <Pressable
-              style={styles.arrowContainer}
-              onPress={() => {
-                if (currentIndex === "1") {
-                  setCurrentIndex("2");
-                } else if (currentIndex === "2") {
-                  setCurrentIndex("3");
-                } else {
-                  navigation.navigate("WelcomeStarted");
-                }
-              }}
-            >
-              <OnboardingNextArrow />
-            </Pressable>
+          style={[
+            styles.bottomOverlayContainer,
+            {
+              borderTopLeftRadius:
+                currentIndex === "1" ? 175 : currentIndex === "2" ? 34 : 122,
+              borderTopRightRadius:
+                currentIndex === "1" ? 34 : currentIndex === "2" ? 175 : 137,
+            },
+          ]}
+        ></View>
+        <View style={styles.bottomContainer}>
+          <Typography
+            weight={600}
+            color="#4F35CE"
+            size={30}
+            text={items[Number(currentIndex) - 1].title}
+          />
+          <View style={{ marginTop: 10 }}>
+            <Typography
+              text={items[Number(currentIndex) - 1].description}
+              color="#313030"
+              size={24}
+              weight={300}
+            />
+          </View>
+          <View
+            style={{
+              position: "absolute",
+              bottom: 60,
+              width: "100%",
+              justifyContent: "center",
+              alignSelf: "center",
+            }}
+          >
+            <View style={styles.bottomItemContainer}>
+              <Pressable>
+                <Typography text="Skip" size={18} />
+              </Pressable>
+              <Pressable
+                style={styles.arrowContainer}
+                onPress={() => {
+                  if (currentIndex === "1") {
+                    setCurrentIndex("2");
+                  } else if (currentIndex === "2") {
+                    setCurrentIndex("3");
+                  } else {
+                    navigation.navigate("WelcomeStarted");
+                  }
+                }}
+              >
+                <OnboardingNextArrow />
+              </Pressable>
+            </View>
           </View>
         </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </ImageBackground>
   );
 };
 
@@ -98,7 +109,7 @@ const styles = StyleSheet.create({
   container: {
     position: "relative",
     flex: 1,
-    backgroundColor: "#8C78F2",
+    // backgroundColor: "#8C78F2",
   },
   bottomContainer: {
     position: "absolute",

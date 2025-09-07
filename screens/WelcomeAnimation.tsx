@@ -10,6 +10,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useNavigation } from "@react-navigation/native";
+import { getToken } from "@/utils/storage";
 
 const WelcomeAnimation = () => {
   const navigation = useNavigation();
@@ -103,12 +104,18 @@ const WelcomeAnimation = () => {
   }, []);
 
   useEffect(() => {
-    if (!navigate) return;
-    navigation.reset({
-      index: 0,
-      // routes: [{ name: "GetStarted" }],
-      routes: [{ name: "Onboarding" }],
-    });
+    const navigateDetails = async () => {
+      if (!navigate) return;
+      const token = await getToken();
+      console.log("Token found:", token);
+      // navigation.navigate(token ? "NavigatorTab" : "WelcomeAnimation");
+      navigation.reset({
+        index: 0,
+        // routes: [{ name: "GetStarted" }],
+        routes: [{ name: !token ? "Onboarding" : "NavigatorTab" }],
+      });
+    };
+    navigateDetails();
   }, [navigate]);
 
   return (

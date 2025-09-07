@@ -1,0 +1,36 @@
+{
+  "cli": {
+    "version": ">= 10.2.1"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "ANDROID_SDK_ROOT": "/Users/macbookair/Library/Android/sdk",
+        "ANDROID_HOME": "/Users/macbookair/Library/Android/sdk"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "env": {
+        "ANDROID_SDK_ROOT": "/Users/macbookair/Library/Android/sdk",
+        "ANDROID_HOME": "/Users/macbookair/Library/Android/sdk"
+      }
+    },
+    "production": {
+      "ios": {
+        "image": "macos-sequoia-15.3-xcode-16.2",
+        "distribution": "store"
+      },
+      "env": {
+        "ANDROID_SDK_ROOT": "/Users/macbookair/Library/Android/sdk",
+        "ANDROID_HOME": "/Users/macbookair/Library/Android/sdk"
+      },
+      "credentialsSource": "remote"
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}

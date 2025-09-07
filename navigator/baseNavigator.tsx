@@ -8,10 +8,29 @@ import EnterMail from "../screens/EnterMail";
 import EnterOtp from "@/screens/EnterOtp";
 import OnboardingDetails from "@/screens/OnboardingDetails";
 import OnboardingBank from "@/screens/OnboardingBank";
+import OnboardingBankSuccess from "@/screens/OnboardingBankSuccess";
+import BottomNavigator from "./BottomNavigator";
+import { getToken } from "@/utils/storage";
+import { useNavigation } from "@react-navigation/native";
+import { useLayoutEffect } from "react";
+import * as SplashScreen from "expo-splash-screen";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
+// SplashScreen.preventAutoHideAsync();
+
 const BaseNavigator = () => {
+  // const navigation = useNavigation();
+  // const navigateToDashboard = async () => {
+  //   const token = await getToken();
+  //   console.log(token);
+  //   navigation.navigate(token ? "NavigatorTab" : "WelcomeAnimation");
+  //   SplashScreen.hideAsync();
+  // };
+
+  useLayoutEffect(() => {
+    // navigateToDashboard();
+  }, []);
   return (
     <Stack.Navigator
       screenOptions={{
@@ -27,6 +46,11 @@ const BaseNavigator = () => {
       <Stack.Screen name="EmailOtp" component={EnterOtp} />
       <Stack.Screen name="OnboardingDetails" component={OnboardingDetails} />
       <Stack.Screen name="OnboardingBank" component={OnboardingBank} />
+      <Stack.Screen
+        name="OnboardingBankSuccess"
+        component={OnboardingBankSuccess}
+      />
+      <Stack.Screen name="NavigatorTab" component={BottomNavigator} />
 
       {/* Add your screens here */}
     </Stack.Navigator>

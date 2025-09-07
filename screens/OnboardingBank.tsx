@@ -4,8 +4,6 @@ import Typography from "../components/Typography";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../components/Button";
 import { useNavigation } from "@react-navigation/native";
-import TextInputComponent from "@/components/TextInput";
-import CountryInput from "@/components/CountryInput";
 
 const OnboardingBank = () => {
   const navigation = useNavigation();
@@ -22,11 +20,16 @@ const OnboardingBank = () => {
           align="center"
         />
 
+        <Typography align="center" color="#000000">
+          So we can track your glow-up
+        </Typography>
+
         <View style={styles.buttonBottomContainer}>
           <Button
             text="Connect Account"
             width={"100%"}
             backgroundColor="#8C78F2"
+            onPress={() => navigation.navigate("OnboardingBankSuccess")}
           />
         </View>
       </View>

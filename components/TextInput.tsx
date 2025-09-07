@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TextInput, Platform } from "react-native";
+import { StyleSheet, Text, View, TextInput, Platform, KeyboardAvoidingView } from "react-native";
 import React from "react";
 import Typography from "./Typography";
 import { TextInputComponentProps } from "@/types/component";
@@ -23,42 +23,47 @@ const TextInputComponent: React.FC<TextInputComponentProps> = ({
     <View style={{ marginVertical, width: "100%" }}>
       <View style={{ position: "relative" }}>
         <View style={styles.placeholderContainer}>
-          <Typography align="left" color={labelColor} weight="600">
+          <Typography align="left" color={labelColor} size={12} weight="600">
             {label}
           </Typography>
         </View>
-        <TextInput
-          style={[
-            styles.input,
-            {
-              borderColor,
-              backgroundColor,
-              height: height || (allowMultipleLine ? 150 : 50),
-              ...(allowMultipleLine && {
-                textAlignVertical: "top",
-              }),
-              fontFamily: "DarkerGrotesque_Regular",
-              ...style,
-            },
-          ]}
-          placeholder={placeHolder}
-          placeholderTextColor={placeHolderColor || "#3C3C3C"}
-          value={value}
-          onChangeText={(text) => setValue(text)}
-          secureTextEntry={type === "password"}
-          keyboardType={
-            type === "email"
-              ? "email-address"
-              : type === "number"
-              ? "number-pad"
-              : type === "tel"
-              ? "phone-pad"
-              : "default"
-          }
-          autoCapitalize="none"
-          multiline={allowMultipleLine}
-          numberOfLines={numberOfLines}
-        />
+        {/* <KeyboardAvoidingView
+          style={{ flex: 1, height: height || (allowMultipleLine ? 150 : 50) }}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+        > */}
+          <TextInput
+            style={[
+              styles.input,
+              {
+                borderColor,
+                backgroundColor,
+                height: height || (allowMultipleLine ? 150 : 50),
+                ...(allowMultipleLine && {
+                  textAlignVertical: "top",
+                }),
+                fontFamily: "DarkerGrotesque_Regular",
+                ...style,
+              },
+            ]}
+            placeholder={placeHolder}
+            placeholderTextColor={placeHolderColor || "#3C3C3C"}
+            value={value}
+            onChangeText={(text) => setValue(text)}
+            secureTextEntry={type === "password"}
+            keyboardType={
+              type === "email"
+                ? "email-address"
+                : type === "number"
+                ? "number-pad"
+                : type === "tel"
+                ? "phone-pad"
+                : "default"
+            }
+            autoCapitalize="none"
+            multiline={allowMultipleLine}
+            numberOfLines={numberOfLines}
+          />
+        {/* </KeyboardAvoidingView> */}
       </View>
     </View>
   );
@@ -72,7 +77,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     backgroundColor: "#FFFFFF",
     zIndex: 1,
-    top: -10,
+    top: -8,
     left: 15,
     paddingHorizontal: 5,
   },
