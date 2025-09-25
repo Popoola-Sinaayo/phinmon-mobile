@@ -1,39 +1,111 @@
 import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { use, useEffect } from "react";
 import Typography from "../components/Typography";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../components/Button";
 import { useNavigation } from "@react-navigation/native";
+import {
+  MonoProvider,
+  useMonoConnect,
+  MonoConnectButton,
+} from "@mono.co/connect-react-native";
+import { useMutation } from "@tanstack/react-query";
+import { exhangeMonoCodeForToken } from "@/requests/authentication";
+import { showMessage } from "react-native-flash-message";
 
 const OnboardingBank = () => {
   const navigation = useNavigation();
+  const { init, reauthorise } = useMonoConnect();
+  const exhangeMonoCodeForTokenMutation = useMutation({
+    mutationFn: exhangeMonoCodeForToken,
+    onSuccess: (data) => {
+      console.log("Details updated:", data);
+      showMessage({
+        message: "Bank Connected Successfully",
+        type: "success",
+      });
+
+      setTimeout(() => {
+        navigation.navigate("OnboardingBankSuccess");
+      }, 2000);
+    },
+
+    onError: (error) => {
+      console.error("Onboarding details error:", error);
+      showMessage({
+        message: "Bank Connection Failed, Try again",
+        type: "danger",
+      });
+    },
+  });
+
+  const config = {
+    publicKey: "test_pk_o0xzst25ptu1geuqq8qm",
+    scope: "auth",
+    // data: {
+    //   customer: { id: "P015152" },
+    // },
+    // accountId: "P015152",
+    onClose: () => alert("Widget closed"),
+    onSuccess: (data: any) => {
+      const code = data.getAuthCode();
+      console.log("Access code", code);
+    },
+    reference: "Test_Reference", // optional
+    onEvent: (eventName: string, data: any) => {
+      // optional
+      console.log(eventName);
+      console.log(data);
+      if (eventName === "SUCCESS") {
+        console.log(data.code);
+        exhangeMonoCodeForTokenMutation.mutate(data.code);
+      }
+    },
+  };
+  useEffect(() => {
+    if (exhangeMonoCodeForTokenMutation.isPending) {
+      // console.log("Loading...");
+      showMessage({
+        message: "Connecting to bank...",
+        type: "info",
+        autoHide: false,
+      });
+    }
+  }, [exhangeMonoCodeForTokenMutation.isPending]);
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.firstOverlayContainer} />
-      <View style={styles.secondOverlayContainer} />
-      <View style={styles.contentContainer}>
-        <Typography
-          text="Hook up your bank👨‍💼"
-          weight={500}
-          color="#000000"
-          size={28}
-          align="center"
-        />
-
-        <Typography align="center" color="#000000">
-          So we can track your glow-up
-        </Typography>
-
-        <View style={styles.buttonBottomContainer}>
-          <Button
-            text="Connect Account"
-            width={"100%"}
-            backgroundColor="#8C78F2"
-            onPress={() => navigation.navigate("OnboardingBankSuccess")}
+    <MonoProvider {...config}>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.firstOverlayContainer} />
+        <View style={styles.secondOverlayContainer} />
+        <View style={styles.contentContainer}>
+          <Typography
+            text="Hook up your bank👨‍💼"
+            weight={500}
+            color="#000000"
+            size={28}
+            align="center"
           />
+
+          <Typography align="center" color="#000000">
+            So we can track your glow-up
+          </Typography>
+
+          <View style={styles.buttonBottomContainer}>
+            {/* <Button
+                text="Connect Account"
+                width={"100%"}
+                backgroundColor="#8C78F2"
+                onPress={() => {
+                  console.log("Pressed");
+                  init();
+                  // reauthorise("P015152");
+                }}
+              /> */}
+            <MonoConnectButton />
+          </View>
         </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </MonoProvider>
   );
 };
 

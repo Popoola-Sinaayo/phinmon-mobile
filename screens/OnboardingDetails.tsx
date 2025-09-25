@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { KeyboardAvoidingView, StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
 import Typography from "../components/Typography";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -39,66 +39,68 @@ const OnboardingDetails = () => {
     },
   });
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.firstOverlayContainer} />
-      <View style={styles.secondOverlayContainer} />
-      <View style={styles.contentContainer}>
-        <Typography
-          text="Let’s get to know you 😎"
-          weight={500}
-          color="#000000"
-          size={28}
-          align="center"
-        />
-        <View style={styles.formContainer}>
-          <TextInputComponent
-            label="Full Name"
-            placeHolder="What should we call you?"
-            value={details.fullName}
-            setValue={(data) => {
-              setDetails((prev) => ({ ...prev, fullName: data }));
-            }}
-            borderColor="#E5E5E5"
-            placeHolderColor="#B9B9B9"
-            labelColor="#484848"
-            height={45}
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
+      <SafeAreaView style={styles.container}>
+        <View style={styles.firstOverlayContainer} />
+        <View style={styles.secondOverlayContainer} />
+        <View style={styles.contentContainer}>
+          <Typography
+            text="Let’s get to know you 😎"
+            weight={500}
+            color="#000000"
+            size={28}
+            align="center"
           />
-          <TextInputComponent
-            label="Phone Number"
-            placeHolder="Digits we can text starting with country code"
-            value={details.phoneNumber}
-            setValue={(data) => {
-              setDetails((prev) => ({ ...prev, phoneNumber: data }));
-            }}
-            borderColor="#E5E5E5"
-            placeHolderColor="#B9B9B9"
-            labelColor="#484848"
-            height={45}
-            type="tel"
-          />
-          <CountryInput
-            label="Country"
-            placeHolder="Where you at?"
-            setValue={(data) => {
-              console.log(data)
-              setDetails((prev) => ({ ...prev, country: data }));
-            }}
-            value={details.country}
-          />
+          <View style={styles.formContainer}>
+            <TextInputComponent
+              label="Full Name"
+              placeHolder="What should we call you?"
+              value={details.fullName}
+              setValue={(data) => {
+                setDetails((prev) => ({ ...prev, fullName: data }));
+              }}
+              borderColor="#E5E5E5"
+              placeHolderColor="#B9B9B9"
+              labelColor="#484848"
+              height={45}
+            />
+            <TextInputComponent
+              label="Phone Number"
+              placeHolder="Digits we can text starting with country code"
+              value={details.phoneNumber}
+              setValue={(data) => {
+                setDetails((prev) => ({ ...prev, phoneNumber: data }));
+              }}
+              borderColor="#E5E5E5"
+              placeHolderColor="#B9B9B9"
+              labelColor="#484848"
+              height={45}
+              type="tel"
+            />
+            <CountryInput
+              label="Country"
+              placeHolder="Where you at?"
+              setValue={(data) => {
+                console.log(data);
+                setDetails((prev) => ({ ...prev, country: data }));
+              }}
+              value={details.country}
+            />
+          </View>
+          <View style={styles.buttonBottomContainer}>
+            <Button
+              text="Next"
+              width={120}
+              isLoading={onboardingDetailsMutation.isPending}
+              backgroundColor="#8C78F2"
+              onPress={() => {
+                onboardingDetailsMutation.mutate(details);
+              }}
+            />
+          </View>
         </View>
-        <View style={styles.buttonBottomContainer}>
-          <Button
-            text="Next"
-            width={120}
-            isLoading={onboardingDetailsMutation.isPending}
-            backgroundColor="#8C78F2"
-            onPress={() => {
-              onboardingDetailsMutation.mutate(details);
-            }}
-          />
-        </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 };
 

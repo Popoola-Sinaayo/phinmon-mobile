@@ -112,7 +112,7 @@ const WelcomeAnimation = () => {
       navigation.reset({
         index: 0,
         // routes: [{ name: "GetStarted" }],
-        routes: [{ name: !token ? "Onboarding" : "NavigatorTab" }],
+        routes: [{ name: token ? "Onboarding" : "NavigatorTab" }],
       });
     };
     navigateDetails();
