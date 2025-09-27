@@ -21,18 +21,18 @@ const BottomNavigator = () => {
       screenOptions={{
         headerShown: false,
         tabBarLabelPosition: "below-icon",
-        tabBarStyle: {
-          //   backgroundColor: "red",
-          //   backgroundColor: "#D6D6D67D",
-          borderRadius: 30,
-          height: 60,
-          bottom: insets.bottom,
-          width: "90%",
-          paddingBottom: 0,
+        // tabBarStyle: {
+        //   //   backgroundColor: "red",
+        //   //   backgroundColor: "#D6D6D67D",
+        //   borderRadius: 30,
+        //   height: 60,
+        //   bottom: insets.bottom,
+        //   width: "90%",
+        //   paddingBottom: 0,
 
-          alignSelf: "center",
-          paddingTop: 4,
-        },
+        //   alignSelf: "center",
+        //   paddingTop: 4,
+        // },
       }}
     >
       <Tab.Screen
@@ -58,7 +58,7 @@ const BottomNavigator = () => {
           ),
           tabBarLabel: (focused) => (
             <Typography color={focused.focused ? "#000000" : "#818181"}>
-              Chat
+              Chat AI
             </Typography>
           ),
         }}

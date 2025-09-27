@@ -16,6 +16,7 @@ export default function App() {
         <BaseNavigator />
         <FlashMessage position="top" />
       </QueryClientProvider>
+      <StatusBar style="auto" backgroundColor={color} />
     </NavigationContainer>
   );
 }
