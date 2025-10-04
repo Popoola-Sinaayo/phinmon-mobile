@@ -9,6 +9,7 @@ import CountryInput from "@/components/CountryInput";
 import { useMutation } from "@tanstack/react-query";
 import { onboardUser } from "@/requests/authentication";
 import { showMessage } from "react-native-flash-message";
+import { setLocalName } from "@/utils/storage";
 
 const OnboardingDetails = () => {
   const navigation = useNavigation();
@@ -25,7 +26,7 @@ const OnboardingDetails = () => {
         message: "Details Updated Successfully",
         type: "success",
       });
-
+      setLocalName(details.fullName?.split(" ")[0]);
       setTimeout(() => {
         navigation.navigate("OnboardingBank");
       }, 2000);

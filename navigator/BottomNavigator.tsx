@@ -40,10 +40,12 @@ const BottomNavigator = () => {
         component={Dashboard}
         options={{
           tabBarIcon: (focused) => (
-            <HomeBottomNavigator color={focused.focused ? "#000000" : "#818181"} />
+            <HomeBottomNavigator
+              color={focused.focused ? "#8C78F2" : "#818181"}
+            />
           ),
           tabBarLabel: (focused) => (
-            <Typography color={focused.focused ? "#000000" : "#818181"}>
+            <Typography color={focused.focused ? "#8C78F2" : "#818181"}>
               Home
             </Typography>
           ),
@@ -54,10 +56,12 @@ const BottomNavigator = () => {
         component={ChatAI}
         options={{
           tabBarIcon: (focused) => (
-            <BottomNavigatorChat color={focused.focused ? "#000000" : "#818181"} />
+            <BottomNavigatorChat
+              color={focused.focused ? "#8C78F2" : "#818181"}
+            />
           ),
           tabBarLabel: (focused) => (
-            <Typography color={focused.focused ? "#000000" : "#818181"}>
+            <Typography color={focused.focused ? "#8C78F2" : "#818181"}>
               Chat AI
             </Typography>
           ),
@@ -68,10 +72,12 @@ const BottomNavigator = () => {
         component={TransactionHistory}
         options={{
           tabBarIcon: (focused) => (
-            <BottomNavigatorHistory color={focused.focused ? "#000000" : "#818181"} />
+            <BottomNavigatorHistory
+              color={focused.focused ? "#8C78F2" : "#818181"}
+            />
           ),
           tabBarLabel: (focused) => (
-            <Typography color={focused.focused ? "#000000" : "#818181"}>
+            <Typography color={focused.focused ? "#8C78F2" : "#818181"}>
               History
             </Typography>
           ),
@@ -82,16 +88,16 @@ const BottomNavigator = () => {
         component={Analysis}
         options={{
           tabBarIcon: (focused) => (
-            <BottomNavigatorAnalyze color={focused.focused ? "#000000" : "#818181"} />
+            <BottomNavigatorAnalyze
+              color={focused.focused ? "#8C78F2" : "#818181"}
+            />
           ),
-            tabBarLabel: (focused) => {
-
-                return (
-                  
-                    <Typography color={focused.focused ? "#000000" : "#818181"}>
-              Analysis
-            </Typography>
-            )
+          tabBarLabel: (focused) => {
+            return (
+              <Typography color={focused.focused ? "#8C78F2" : "#818181"}>
+                Analysis
+              </Typography>
+            );
           },
         }}
       />

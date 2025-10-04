@@ -4,8 +4,8 @@ import Svg, { Path } from "react-native-svg";
 function BottomNavigatorAnalyze(props: {color?: string}) {
   return (
     <Svg
-      width={32}
-      height={27}
+      width={20}
+      height={20}
       viewBox="0 0 32 27"
       fill="none"
     >

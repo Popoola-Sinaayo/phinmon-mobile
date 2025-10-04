@@ -1,5 +1,6 @@
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
 export const isOnboardingUI = async () => {
   try {
     const value = await AsyncStorage.getItem("isOnboarding");
@@ -18,7 +19,6 @@ export const setOnboardingUICompleted = async () => {
   }
 };
 
-
 export const setToken = async (token: string) => {
   try {
     await AsyncStorage.setItem("token", token);
@@ -36,3 +36,23 @@ export const getToken = async () => {
     return null;
   }
 };
+
+export const getLocalName = async () => {
+  try {
+    const value = await AsyncStorage.getItem("name");
+    return value;
+  } catch (error) {
+    console.error("Error reading name value:", error);
+    return null;
+  }
+};
+
+export const setLocalName = async (name: string) => {
+  try {
+    await AsyncStorage.setItem("name", name);
+  } catch (error) {
+    console.error("Error setting name value:", error);
+  }
+};
+
+

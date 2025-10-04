@@ -1,75 +1,147 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React from "react";
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Animated,
+  Easing,
+} from "react-native";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import CustomHeader from "@/components/CustomHeader";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Typography from "@/components/Typography";
 import QuickTips from "@/components/QuickTips";
+import { getLocalName } from "@/utils/storage";
+import { useQuery } from "@tanstack/react-query";
+import { getUserSpendingClass, syncTransactions } from "@/requests/dashboard";
+import DashboardSkeleton from "@/components/DashboardSkeleton";
 
 const Dashboard = () => {
+  const [name, setName] = useState("");
+  const rotateValue = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const spinAnimation = Animated.loop(
+      Animated.timing(rotateValue, {
+        toValue: 1,
+        duration: 1000, // 1s per full spin
+        easing: Easing.linear,
+        useNativeDriver: true,
+      })
+    );
+
+    spinAnimation.start();
+
+    return () => spinAnimation.stop();
+  }, []);
+
+  // interpolate 0 → 360 degrees
+  const rotate = rotateValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0deg", "360deg"],
+  });
+  useLayoutEffect(() => {
+    const getUserName = async () => {
+      const name = await getLocalName();
+      if (name) {
+        setName(name);
+      }
+    };
+    getUserName();
+  }, []);
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["userClass"],
+    queryFn: getUserSpendingClass,
+  });
+
+  const { isLoading: isSyncLoading, refetch: refetchSyncTransaction } =
+    useQuery({
+      queryKey: ["syncTransactions"],
+      queryFn: syncTransactions,
+      enabled: false,
+    });
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.container}>
-        <CustomHeader />
+        {/* <CustomHeader /> */}
+        <View style={{ width: "90%", alignSelf: "center", marginTop: 20 }}>
+          <Typography weight={500} size={24}>
+            Welcome {name}
+          </Typography>
+        </View>
         <View style={{ position: "relative", marginBottom: 30 }}>
           <View style={styles.topContainerOverlay} />
-          <View style={styles.topContainer}>
-            <View style={styles.medalContainer}>
-              <Image
-                source={require("@/assets/medal.png")}
-                style={{ width: 125, height: 170 }}
+          {isLoading ? (
+            <></>
+          ) : (
+            // <DashboardSkeleton />
+            <View style={styles.topContainer}>
+              <Typography
+                text="Spending Aura ✨"
+                size={12}
+                weight={800}
+                color="#FFFFFF"
+                align="left"
               />
+              <Typography
+                weight={800}
+                color="#FFFFFF"
+                size={26}
+                align="left"
+                marginTop={10}
+              >
+                {data.type}
+              </Typography>
+              <View
+                style={{
+                  // flexDirection: "row",
+                  // alignItems: "center",
+                  // gap: 3,
+                  width: "65%",
+                }}
+              >
+                <Typography color="#FFFFFF" size={12}>
+                  {data.desc}
+                </Typography>
+              </View>
+              <View
+                style={{
+                  position: "absolute",
+                  right: 10,
+                  bottom: 20,
+                  alignItems: "center",
+                }}
+              >
+                <TouchableOpacity onPress={() => refetchSyncTransaction()}>
+                  <Animated.View
+                    style={[
+                      isSyncLoading && {
+                        transform: [{ rotate }],
+                      },
+                    ]}
+                  >
+                    <Animated.Image
+                      source={require("@/assets/sync.png")}
+                      style={{ width: 36, height: 36 }}
+                    />
+                  </Animated.View>
+                </TouchableOpacity>
+                <Typography color="#ffffff">Tap to Sync ⚡</Typography>
+              </View>
             </View>
-            <Typography
-              text="⚡ Money Vibe Score"
-              size={12}
-              weight={800}
-              color="#FFFFFF"
-              align="left"
-            />
-            <Typography
-              weight={800}
-              color="#FFFFFF"
-              size={60}
-              align="left"
-              marginTop={10}
-            >
-              88
-            </Typography>
-            <View
-              style={{ flexDirection: "row", alignItems: "center", gap: 3 }}
-            >
-              <Typography color="#FFFFFF">Zen Spender 🌿</Typography>
-              <TouchableOpacity>
-                <Image
-                  source={require("@/assets/question-mark-green.png")}
-                  style={{ width: 10, height: 10 }}
-                />
-              </TouchableOpacity>
-            </View>
-            <View
-              style={{
-                position: "absolute",
-                right: 10,
-                bottom: 8,
-                alignItems: "center",
-              }}
-            >
-              <TouchableOpacity>
-                <Image
-                  source={require("@/assets/sync.png")}
-                  style={{ width: 36, height: 36 }}
-                />
-              </TouchableOpacity>
-              <Typography color="#ffffff">Tap to Sync ⚡</Typography>
-            </View>
-          </View>
+          )}
         </View>
         <QuickTips />
         <View style={styles.historyContainer}>
           <View style={styles.historyItemHeader}>
             <Typography weight={600}>History</Typography>
             <TouchableOpacity>
-              <Typography color="#8C78F2" weight={500}>See All</Typography>
+              <Typography color="#8C78F2" weight={500}>
+                See All
+              </Typography>
             </TouchableOpacity>
           </View>
         </View>
@@ -93,7 +165,7 @@ const styles = StyleSheet.create({
     width: "90%",
     alignSelf: "center",
     paddingTop: 15,
-    paddingBottom: 5,
+    paddingBottom: 20,
     paddingRight: 20,
     paddingLeft: 20,
     marginTop: 20,

@@ -39,28 +39,32 @@ const ChatAI = () => {
     <SafeAreaView style={styles.container}>
       {/* <View style={styles.container}> */}
       <CustomHeader />
-      <View style={{display: "flex"}}>
-
-      <ChatCard mode="ai" />
-      <ChatCard mode="user" />
-
+      <View style={{ display: "flex" }}>
+        {/* <ChatCard mode="ai" />
+      <ChatCard mode="user" /> */}
       </View>
-      {/* <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center", position: "relative" }}
-        >
-          <Image
-            source={require("@/assets/robotics.png")}
-            style={styles.emptyImage}
-          />
-        </View> */}
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          position: "relative",
+        }}
+      >
+        <Image
+          source={require("@/assets/robotics.png")}
+          style={styles.emptyImage}
+        />
+      </View>
       <Feather name="send" size={24} color="red" />
       <FontAwesome name="send" size={24} color="black" />
       <View style={[styles.inputContainer, { bottom: bottomContainer }]}>
         <TextInput
           style={[styles.input]}
-          placeholder="Type your message here..."
+          placeholder="Ready for some no-cap money advice?"
           multiline
           numberOfLines={6}
+          placeholderTextColor={"#A3A3A3"}
         />
         <Feather name="send" size={30} color="red" />
       </View>

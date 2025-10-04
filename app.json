@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "phinmon",
+    "name": "Phinmon",
     "slug": "phinmon",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -30,8 +30,6 @@
         "projectId": "2f796c6d-970f-49b5-9125-b8ae658de178"
       }
     },
-    "plugins": [
-      "expo-asset"
-    ]
+    "plugins": ["expo-asset"]
   }
 }

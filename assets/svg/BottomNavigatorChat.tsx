@@ -4,8 +4,8 @@ import Svg, { Path } from "react-native-svg";
 function BottomNavigatorChat(props: {color?: string}) {
   return (
     <Svg
-      width={35}
-      height={31}
+      width={22}
+      height={22}
       viewBox="0 0 35 31"
       fill="none"
     >
