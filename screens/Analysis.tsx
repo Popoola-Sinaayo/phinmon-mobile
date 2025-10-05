@@ -10,6 +10,7 @@ import {
   ContributionGraph,
   StackedBarChart,
 } from "react-native-chart-kit";
+import Typography from '@/components/Typography';
 
 const data = [
   {
@@ -62,20 +63,23 @@ const Analysis = () => {
   };
   return (
     <SafeAreaView style={styles.container}>
-      <CustomHeader />
-      <View>
+      <View style={styles.topContainer}>
+        <Typography weight={600} size={24}>
+          Analysis
+        </Typography>
+      </View>
+      <View style={{ alignItems: "center", paddingVertical: 20 }}>
         <PieChart
           data={data}
           width={Dimensions.get("window").width}
-          height={490}
+          height={250}
           chartConfig={chartConfig}
           accessor={"population"}
           backgroundColor={"transparent"}
-          paddingLeft={"15"}
-          center={[80, 50]}
-          
-          style={{ alignSelf: "center" }}
-          // absolute
+          paddingLeft={"0"} // shift the pie toward the right
+          center={[0, 0]} // keep pie centered vertically
+          absolute
+          hasLegend={false}
         />
       </View>
     </SafeAreaView>
@@ -89,5 +93,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     position: "relative",
+  },
+  topContainer: {
+    width: "90%",
+    alignSelf: "center",
+    marginTop: 20,
+    // paddingVertical: 20,
+    // backgroundColor: "red",
   },
 });

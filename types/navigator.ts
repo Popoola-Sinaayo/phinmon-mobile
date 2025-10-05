@@ -19,6 +19,7 @@ export type RootTabParamList = {
   ChatWithAI: undefined;
   TransactionHistory: undefined;
   Analysis: undefined;
+  Settings: undefined;
 };
 
 declare global {

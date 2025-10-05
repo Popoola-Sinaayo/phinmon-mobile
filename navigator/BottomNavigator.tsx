@@ -11,6 +11,8 @@ import TransactionHistory from "@/screens/TransactionHistory";
 import BottomNavigatorHistory from "@/assets/svg/BottomNavigatorHistory";
 import Analysis from "@/screens/Analysis";
 import BottomNavigatorAnalyze from "@/assets/svg/BottomNavigatorAnalyze";
+import Settings from "@/screens/Settings";
+import BottomNavigationSettings from "@/assets/svg/BottomNavigationSettings";
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 
@@ -96,6 +98,24 @@ const BottomNavigator = () => {
             return (
               <Typography color={focused.focused ? "#8C78F2" : "#818181"}>
                 Analysis
+              </Typography>
+            );
+          },
+        }}
+      />
+      <Tab.Screen
+        name="Settings"
+        component={Settings}
+        options={{
+          tabBarIcon: (focused) => (
+            <BottomNavigationSettings
+              color={focused.focused ? "#8C78F2" : "#818181"}
+            />
+          ),
+          tabBarLabel: (focused) => {
+            return (
+              <Typography color={focused.focused ? "#8C78F2" : "#818181"}>
+                Settings
               </Typography>
             );
           },

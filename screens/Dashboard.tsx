@@ -6,6 +6,7 @@ import {
   View,
   Animated,
   Easing,
+  ScrollView,
 } from "react-native";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import CustomHeader from "@/components/CustomHeader";
@@ -15,6 +16,7 @@ import QuickTips from "@/components/QuickTips";
 import { getLocalName } from "@/utils/storage";
 import { useQuery } from "@tanstack/react-query";
 import { getUserSpendingClass, syncTransactions } from "@/requests/dashboard";
+import TransactionItem from "@/components/TransactionItem";
 import DashboardSkeleton from "@/components/DashboardSkeleton";
 
 const Dashboard = () => {
@@ -61,6 +63,7 @@ const Dashboard = () => {
       queryKey: ["syncTransactions"],
       queryFn: syncTransactions,
       enabled: false,
+      // onSuccess: () => { }
     });
 
   return (
@@ -73,9 +76,9 @@ const Dashboard = () => {
           </Typography>
         </View>
         <View style={{ position: "relative", marginBottom: 30 }}>
-          <View style={styles.topContainerOverlay} />
+          {!isLoading && <View style={styles.topContainerOverlay} />}
           {isLoading ? (
-            <></>
+            <DashboardSkeleton />
           ) : (
             // <DashboardSkeleton />
             <View style={styles.topContainer}>
@@ -144,6 +147,22 @@ const Dashboard = () => {
               </Typography>
             </TouchableOpacity>
           </View>
+          <View style={{ flex: 1, paddingBottom: 220 }}>
+            <ScrollView style={{ width: "90%", alignSelf: "center" }}>
+              <TransactionItem category="food" />
+              <TransactionItem category="savings" />
+              <TransactionItem category="transport" />
+              <TransactionItem category="donations" />
+              <TransactionItem category="income" />
+              <TransactionItem category="home" />
+              <TransactionItem category="giftings" />
+              <TransactionItem category="subscriptions" />
+              <TransactionItem category="health" />
+              <TransactionItem category="bills" />
+              <TransactionItem category="entertainment" />
+              <TransactionItem category="shopping" />
+            </ScrollView>
+          </View>
         </View>
       </View>
     </SafeAreaView>
@@ -158,6 +177,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     // paddingBottom: 100,
     // backgroundColor: "red"
+    backgroundColor: "#f7f7f7",
   },
   topContainer: {
     backgroundColor: "#8C78F2",
@@ -186,7 +206,7 @@ const styles = StyleSheet.create({
     borderRadius: 21,
   },
   historyContainer: {
-    backgroundColor: "#ECE8FF",
+    backgroundColor: "#ffffff",
     height: "100%",
     paddingBottom: 100,
     marginTop: 30,

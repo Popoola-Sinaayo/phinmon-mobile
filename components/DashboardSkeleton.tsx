@@ -1,38 +1,50 @@
-import React from "react";
-import { View, StyleSheet } from "react-native";
-import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import React, { useEffect, useRef } from "react";
+import { View, StyleSheet, Animated } from "react-native";
 
 export default function DashboardSkeleton() {
+  const shimmer = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.timing(shimmer, {
+        toValue: 1,
+        duration: 1500,
+        useNativeDriver: true,
+      })
+    ).start();
+  }, []);
+
+  const translateX = shimmer.interpolate({
+    inputRange: [0, 1],
+    outputRange: [-100, 400],
+  });
   return (
-    <SkeletonPlaceholder borderRadius={4}>
-      <View style={styles.container}>
-        <View style={styles.avatar} />
-        <View style={styles.textWrapper}>
-          <View style={styles.line} />
-          <View style={[styles.line, { width: 150 }]} />
-        </View>
-      </View>
-    </SkeletonPlaceholder>
+    <View style={styles.skeleton}>
+      <Animated.View
+        style={[
+          styles.shimmer,
+          {
+            transform: [{ translateX }],
+          },
+        ]}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 20,
+  skeleton: {
+    width: "90%",
+    height: 150,
+    backgroundColor: "#8C78F2",
+    // overflow: "hidden",
+    borderRadius: 4,
+    marginVertical: 10,
+    alignSelf: "center",
   },
-  avatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-  },
-  textWrapper: {
-    marginLeft: 20,
-  },
-  line: {
-    width: 200,
-    height: 20,
-    marginBottom: 6,
+  shimmer: {
+    width: "90%",
+    height: "100%",
+    backgroundColor: "rgba(255,255,255,0.6)",
   },
 });

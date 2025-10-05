@@ -12,6 +12,8 @@ import CustomHeader from "@/components/CustomHeader";
 import Feather from "@expo/vector-icons/Feather";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import ChatCard from "@/components/ChatCard";
+import Typography from "@/components/Typography";
+import SendIcon from "@/assets/svg/SendIcon";
 
 const ChatAI = () => {
   const [bottomContainer, setBottomContainer] = useState(5);
@@ -37,8 +39,12 @@ const ChatAI = () => {
   }, []);
   return (
     <SafeAreaView style={styles.container}>
-      {/* <View style={styles.container}> */}
-      <CustomHeader />
+
+      <View style={styles.topContainer}>
+        <Typography weight={600} size={24}>
+          Chat With Phinny{" "}
+        </Typography>
+      </View>
       <View style={{ display: "flex" }}>
         {/* <ChatCard mode="ai" />
       <ChatCard mode="user" /> */}
@@ -51,13 +57,8 @@ const ChatAI = () => {
           position: "relative",
         }}
       >
-        <Image
-          source={require("@/assets/robotics.png")}
-          style={styles.emptyImage}
-        />
+        <Typography color="#000000">No messages yet</Typography>
       </View>
-      <Feather name="send" size={24} color="red" />
-      <FontAwesome name="send" size={24} color="black" />
       <View style={[styles.inputContainer, { bottom: bottomContainer }]}>
         <TextInput
           style={[styles.input]}
@@ -66,7 +67,7 @@ const ChatAI = () => {
           numberOfLines={6}
           placeholderTextColor={"#A3A3A3"}
         />
-        <Feather name="send" size={30} color="red" />
+        <SendIcon color={"#8C78F2"} />
       </View>
       {/* </View> */}
     </SafeAreaView>
@@ -106,5 +107,12 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     color: "#000000",
     // left: 0,
+  },
+  topContainer: {
+    width: "90%",
+    alignSelf: "center",
+    marginTop: 20,
+    // paddingVertical: 20,
+    // backgroundColor: "red",
   },
 });
