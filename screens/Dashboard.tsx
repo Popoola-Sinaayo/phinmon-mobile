@@ -148,7 +148,9 @@ const Dashboard = () => {
             </TouchableOpacity>
           </View>
           <View style={{ flex: 1, paddingBottom: 220 }}>
-            <ScrollView style={{ width: "90%", alignSelf: "center" }}>
+            <ScrollView
+              style={{ width: "90%", alignSelf: "center", flexGrow: 1 }}
+            >
               <TransactionItem category="food" />
               <TransactionItem category="savings" />
               <TransactionItem category="transport" />
@@ -208,6 +210,7 @@ const styles = StyleSheet.create({
   historyContainer: {
     backgroundColor: "#ffffff",
     height: "100%",
+    flexGrow: 1,
     paddingBottom: 100,
     marginTop: 30,
     borderTopLeftRadius: 21,

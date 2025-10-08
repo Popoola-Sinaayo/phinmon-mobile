@@ -11,6 +11,9 @@ import {
   StackedBarChart,
 } from "react-native-chart-kit";
 import Typography from '@/components/Typography';
+import { Pie, PolarChart } from "victory-native";
+import DatePicker from "@/components/DatePicker";
+import Button from "@/components/Button";
 
 const data = [
   {
@@ -61,6 +64,24 @@ const Analysis = () => {
     barPercentage: 0.5,
     useShadowColorFromDataset: false, // optional
   };
+  function randomNumber() {
+    return Math.floor(Math.random() * 26) + 125;
+  }
+  function generateRandomColor(): string {
+    // Generating a random number between 0 and 0xFFFFFF
+    const randomColor = Math.floor(Math.random() * 0xffffff);
+    // Converting the number to a hexadecimal string and padding with zeros
+    return `#${randomColor.toString(16).padStart(6, "0")}`;
+  }
+  const DATA = (numberPoints = 10) =>
+    Array.from({ length: numberPoints }, (_, index) => ({
+      value: randomNumber(),
+      color: generateRandomColor(),
+      label: `Label ${index + 1}`,
+    }));
+
+  console.log(DATA());
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.topContainer}>
@@ -68,19 +89,49 @@ const Analysis = () => {
           Analysis
         </Typography>
       </View>
-      <View style={{ alignItems: "center", paddingVertical: 20 }}>
-        <PieChart
-          data={data}
-          width={Dimensions.get("window").width}
-          height={250}
-          chartConfig={chartConfig}
-          accessor={"population"}
-          backgroundColor={"transparent"}
-          paddingLeft={"0"} // shift the pie toward the right
-          center={[0, 0]} // keep pie centered vertically
-          absolute
-          hasLegend={false}
+      <View style={styles.dateRangeSelectorContainer}>
+        {/* <DatePicker />
+        <DatePicker /> */}
+      </View>
+      <View style={styles.buttonContainer}>
+        <Button
+          text="Get Analysis"
+          backgroundColor="#7A5FFF"
+          paddingTop={5}
+          paddingBottom={5}
+          width={"100%"}
         />
+      </View>
+      <View
+        style={{
+          // alignItems: "center",
+          // paddingVertical: 20,
+          marginTop: 20,
+          justifyContent: "center",
+          height: 300,
+          width: "100%",
+        }}
+      >
+        <PolarChart
+          data={DATA()} // 👈 specify your data
+          labelKey={"label"} // 👈 specify data key for labels
+          valueKey={"value"} // 👈 specify data key for values
+          colorKey={"color"} // 👈 specify data key for color
+        >
+          <Pie.Chart />
+        </PolarChart>
+      </View>
+      <View style={styles.legendContainer}>
+        {DATA().map((item, index) => {
+          return (
+            <View key={item.label} style={{ flexDirection: "row", gap: 5, alignItems: "center" }}>
+              <View style={{backgroundColor: item.color, width: 10, height: 10, borderRadius: 5 }} />
+              <Typography key={index} weight={500}>
+                {item.label}
+              </Typography>
+            </View>
+          );
+        })}
       </View>
     </SafeAreaView>
   );
@@ -94,11 +145,26 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     position: "relative",
   },
+  dateRangeSelectorContainer: {
+    flexDirection: "row",
+    alignSelf: "center",
+    justifyContent: "space-between",
+  },
   topContainer: {
     width: "90%",
     alignSelf: "center",
     marginTop: 20,
     // paddingVertical: 20,
     // backgroundColor: "red",
+  },
+  buttonContainer: {
+    width: "90%",
+    alignSelf: "center",
+  },
+  legendContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: 20,
   },
 });
