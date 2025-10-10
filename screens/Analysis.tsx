@@ -102,37 +102,57 @@ const Analysis = () => {
           width={"100%"}
         />
       </View>
-      <View
-        style={{
-          // alignItems: "center",
-          // paddingVertical: 20,
-          marginTop: 20,
-          justifyContent: "center",
-          height: 300,
-          width: "100%",
-        }}
-      >
-        <PolarChart
-          data={DATA()} // 👈 specify your data
-          labelKey={"label"} // 👈 specify data key for labels
-          valueKey={"value"} // 👈 specify data key for values
-          colorKey={"color"} // 👈 specify data key for color
-        >
-          <Pie.Chart />
-        </PolarChart>
-      </View>
-      <View style={styles.legendContainer}>
-        {DATA().map((item, index) => {
-          return (
-            <View key={item.label} style={{ flexDirection: "row", gap: 5, alignItems: "center" }}>
-              <View style={{backgroundColor: item.color, width: 10, height: 10, borderRadius: 5 }} />
-              <Typography key={index} weight={500}>
-                {item.label}
-              </Typography>
-            </View>
-          );
-        })}
-      </View>
+      {false ? (
+        <>
+          <View
+            style={{
+              // alignItems: "center",
+              // paddingVertical: 20,
+              marginTop: 20,
+              justifyContent: "center",
+              height: 300,
+              width: "100%",
+            }}
+          >
+            <PolarChart
+              data={DATA()} // 👈 specify your data
+              labelKey={"label"} // 👈 specify data key for labels
+              valueKey={"value"} // 👈 specify data key for values
+              colorKey={"color"} // 👈 specify data key for color
+            >
+              <Pie.Chart />
+            </PolarChart>
+          </View>
+          <View style={styles.legendContainer}>
+            {DATA().map((item, index) => {
+              return (
+                <View
+                  key={item.label}
+                  style={{ flexDirection: "row", gap: 5, alignItems: "center" }}
+                >
+                  <View
+                    style={{
+                      backgroundColor: item.color,
+                      width: 10,
+                      height: 10,
+                      borderRadius: 5,
+                    }}
+                  />
+                  <Typography key={index} weight={500}>
+                    {item.label}
+                  </Typography>
+                </View>
+              );
+            })}
+          </View>
+        </>
+      ) : (
+        <View style={styles.noAnalysisContainer}>
+          <Typography weight={400} size={14} align="center">
+            No analysis yet — your wallet’s chilling 😎
+          </Typography>
+        </View>
+      )}
     </SafeAreaView>
   );
 };
@@ -168,5 +188,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 20,
     marginTop: 20,
+  },
+  noAnalysisContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

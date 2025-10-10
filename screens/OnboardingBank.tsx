@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import React, { use, useEffect } from "react";
+import React, { use, useEffect, useState } from "react";
 import Typography from "../components/Typography";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../components/Button";
@@ -16,6 +16,7 @@ import { showMessage } from "react-native-flash-message";
 const OnboardingBank = () => {
   const navigation = useNavigation();
   const { init, reauthorise } = useMonoConnect();
+  const [institutionSelected, setInstitutionSelected] = useState("")
   const exhangeMonoCodeForTokenMutation = useMutation({
     mutationFn: exhangeMonoCodeForToken,
     onSuccess: (data) => {
@@ -56,6 +57,9 @@ const OnboardingBank = () => {
       // optional
       console.log(eventName);
       console.log(data);
+      if (eventName === "INSTITUTION_SELECTED") {
+        setInstitutionSelected(data.institution.name);
+      }
       if (eventName === "SUCCESS") {
         console.log(data.code);
         exhangeMonoCodeForTokenMutation.mutate(data.code);

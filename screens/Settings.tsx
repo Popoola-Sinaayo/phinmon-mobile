@@ -7,8 +7,18 @@ import ProfileIcon from "@/assets/svg/ProfileIcon";
 import NotificationIcon from "@/assets/svg/NotificationIcon";
 import CreditCardIcon from "@/assets/svg/CreditCard";
 import LogoutIcon from "@/assets/svg/LogoutIcon";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
 const Settings = () => {
+  const navigation = useNavigation();
+  const logout = async () => {
+    await AsyncStorage.removeItem("token");
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "WelcomeAnimation" }],
+    });
+  }
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.topContainer}>
@@ -32,7 +42,7 @@ const Settings = () => {
           label="Connected Accounts"
           onPress={() => {}}
         />
-        <SettingsItem icon={<LogoutIcon />} label="Logout" onPress={() => {}} />
+        <SettingsItem icon={<LogoutIcon />} label="Logout" onPress={logout} />
       </View>
     </SafeAreaView>
   );

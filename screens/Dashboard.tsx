@@ -18,9 +18,11 @@ import { useQuery } from "@tanstack/react-query";
 import { getUserSpendingClass, syncTransactions } from "@/requests/dashboard";
 import TransactionItem from "@/components/TransactionItem";
 import DashboardSkeleton from "@/components/DashboardSkeleton";
+import { useNavigation } from "@react-navigation/native";
 
 const Dashboard = () => {
   const [name, setName] = useState("");
+  const navigation = useNavigation();
   const rotateValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -141,30 +143,40 @@ const Dashboard = () => {
         <View style={styles.historyContainer}>
           <View style={styles.historyItemHeader}>
             <Typography weight={600}>History</Typography>
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("TransactionHistory" as any)}
+            >
               <Typography color="#8C78F2" weight={500}>
                 See All
               </Typography>
             </TouchableOpacity>
           </View>
-          <View style={{ flex: 1, paddingBottom: 220 }}>
-            <ScrollView
-              style={{ width: "90%", alignSelf: "center", flexGrow: 1 }}
-            >
-              <TransactionItem category="food" />
-              <TransactionItem category="savings" />
-              <TransactionItem category="transport" />
-              <TransactionItem category="donations" />
-              <TransactionItem category="income" />
-              <TransactionItem category="home" />
-              <TransactionItem category="giftings" />
-              <TransactionItem category="subscriptions" />
-              <TransactionItem category="health" />
-              <TransactionItem category="bills" />
-              <TransactionItem category="entertainment" />
-              <TransactionItem category="shopping" />
-            </ScrollView>
-          </View>
+          {false ? (
+            <View style={{ flex: 1, paddingBottom: 220 }}>
+              <ScrollView
+                style={{ width: "90%", alignSelf: "center", flexGrow: 1 }}
+              >
+                <TransactionItem category="food" />
+                <TransactionItem category="savings" />
+                <TransactionItem category="transport" />
+                <TransactionItem category="donations" />
+                <TransactionItem category="income" />
+                <TransactionItem category="home" />
+                <TransactionItem category="giftings" />
+                <TransactionItem category="subscriptions" />
+                <TransactionItem category="health" />
+                <TransactionItem category="bills" />
+                <TransactionItem category="entertainment" />
+                <TransactionItem category="shopping" />
+              </ScrollView>
+            </View>
+          ) : (
+            <View style={styles.noTransactionsContainer}>
+              <Typography weight={400} size={14} align="center">
+                No transactions yet — your wallet’s chilling 😎
+              </Typography>
+            </View>
+          )}
         </View>
       </View>
     </SafeAreaView>
@@ -223,5 +235,11 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     paddingTop: 20,
     paddingBottom: 10,
+  },
+  noTransactionsContainer: {
+    // flex: 1,
+    height: "50%",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

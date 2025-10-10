@@ -57,7 +57,7 @@ const ChatAI = () => {
           position: "relative",
         }}
       >
-        <Typography color="#000000">No messages yet</Typography>
+        <Typography color="#000000">No messages yet — your wallet’s chilling 😎</Typography>
       </View>
       <View style={[styles.inputContainer, { bottom: bottomContainer }]}>
         <TextInput
