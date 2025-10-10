@@ -2,6 +2,11 @@ import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Typography from '@/components/Typography';
+import SettingsItem from "@/components/SettingsItem";
+import ProfileIcon from "@/assets/svg/ProfileIcon";
+import NotificationIcon from "@/assets/svg/NotificationIcon";
+import CreditCardIcon from "@/assets/svg/CreditCard";
+import LogoutIcon from "@/assets/svg/LogoutIcon";
 
 const Settings = () => {
   return (
@@ -11,17 +16,36 @@ const Settings = () => {
           Settings
         </Typography>
       </View>
+      <View style={styles.settingsContainer}>
+        <SettingsItem
+          icon={<ProfileIcon />}
+          label="Account Details"
+          onPress={() => {}}
+        />
+        <SettingsItem
+          icon={<NotificationIcon />}
+          label="Notification Preferences"
+          onPress={() => {}}
+        />
+        <SettingsItem
+          icon={<CreditCardIcon />}
+          label="Connected Accounts"
+          onPress={() => {}}
+        />
+        <SettingsItem icon={<LogoutIcon />} label="Logout" onPress={() => {}} />
+      </View>
     </SafeAreaView>
   );
-}
+};
 
-export default Settings
+export default Settings;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "flex-start",
     position: "relative",
+    backgroundColor: "#f9f9f9",
   },
   topContainer: {
     width: "90%",
@@ -29,5 +53,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
     // paddingVertical: 20,
     // backgroundColor: "red",
+  },
+  settingsContainer: {
+    width: "90%",
+    alignSelf: "center",
+    marginTop: 20,
   },
 });

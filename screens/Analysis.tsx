@@ -160,11 +160,13 @@ const styles = StyleSheet.create({
   buttonContainer: {
     width: "90%",
     alignSelf: "center",
+    marginTop: 20,
   },
   legendContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "center",
     gap: 20,
+    marginTop: 20,
   },
 });
