@@ -61,7 +61,7 @@ const OnboardingBank = () => {
       }
       if (eventName === "SUCCESS") {
         console.log(data.code);
-        exhangeMonoCodeForTokenMutation.mutate(data.code);
+        exhangeMonoCodeForTokenMutation.mutate({ code: data.code, institution: institutionSelected });
       }
     },
   };

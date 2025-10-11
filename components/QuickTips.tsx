@@ -1,4 +1,10 @@
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
 import React, { useState } from "react";
 import Typography from "./Typography";
 
@@ -26,19 +32,21 @@ const QuickTips: React.FC<{ description: string }> = ({ description }) => {
           Quick Tips
         </Typography>
       </View>
-      <Typography marginTop={8} size={14} color="#4A5568" align="left">
-        {displayText}
-      </Typography>
-      {shouldShowReadMore && (
-        <TouchableOpacity
-          onPress={toggleExpanded}
-          style={styles.readMoreButton}
-        >
-          <Typography size={14} color="#7A5FFF" weight={500}>
-            {isExpanded ? "Read less" : "Read more"}
-          </Typography>
-        </TouchableOpacity>
-      )}
+      <ScrollView>
+        <Typography marginTop={8} size={14} color="#4A5568" align="left">
+          {displayText}
+        </Typography>
+        {shouldShowReadMore && (
+          <TouchableOpacity
+            onPress={toggleExpanded}
+            style={styles.readMoreButton}
+          >
+            <Typography size={14} color="#7A5FFF" weight={500}>
+              {isExpanded ? "Read less" : "Read more"}
+            </Typography>
+          </TouchableOpacity>
+        )}
+      </ScrollView>
     </View>
   );
 };
@@ -62,6 +70,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 2,
     elevation: 1,
+    maxHeight: 200,
   },
   header: {
     flexDirection: "row",

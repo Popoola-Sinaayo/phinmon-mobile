@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -15,6 +15,10 @@ import { Ionicons } from "@expo/vector-icons";
 import NotificationIcon from "@/assets/svg/NotificationIcon";
 import Typography from "@/components/Typography";
 import Button from "@/components/Button";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updateNotificationPreferences } from "@/requests/authentication";
+import { showMessage } from "react-native-flash-message";
+import { useUserData } from "@/hooks/useUserData";
 
 interface NotificationPreferences {
   notifications: "all" | "over_set_amount" | "balance_below_amount" | "none";
@@ -22,9 +26,41 @@ interface NotificationPreferences {
 }
 
 const NotificationPreferences = () => {
+  const { data: userData, isLoading } = useUserData();
+  const queryClient = useQueryClient();
   const [preferences, setPreferences] = useState<NotificationPreferences>({
     notifications: "all",
     notificationSetAmount: 100,
+  });
+
+  // Update preferences when userData loads
+  useEffect(() => {
+    if (userData?.preferences) {
+      setPreferences({
+        notifications: userData.preferences.notifications || "all",
+        notificationSetAmount:
+          userData.preferences.notificationSetAmount || 100,
+      });
+    }
+  }, [userData]);
+
+  const updatePreferencesMutation = useMutation({
+    mutationFn: updateNotificationPreferences,
+    onSuccess: (data) => {
+      console.log("Preferences updated:", data);
+      showMessage({
+        message: "Notification preferences updated successfully!",
+        type: "success",
+      });
+      queryClient.invalidateQueries({ queryKey: ["userData"] });
+    },
+    onError: (error) => {
+      console.error("Preferences update error:", error);
+      showMessage({
+        message: "Failed to update preferences. Please try again.",
+        type: "danger",
+      });
+    },
   });
 
   const notificationTypes = [
@@ -51,7 +87,10 @@ const NotificationPreferences = () => {
   ];
 
   const handleSave = () => {
-    Alert.alert("Success", "Notification preferences updated successfully!");
+    updatePreferencesMutation.mutate({
+      notifications: preferences.notifications,
+      notificationSetAmount: preferences.notificationSetAmount,
+    });
   };
 
   const renderNotificationTypeSelector = () => (
@@ -113,7 +152,7 @@ const NotificationPreferences = () => {
             Amount Threshold
           </Typography>
           <View style={styles.amountInputContainer}>
-            <Text style={styles.currencySymbol}>$</Text>
+            {/* <Text style={styles.currencySymbol}>$</Text> */}
             <TextInput
               style={styles.amountInput}
               value={preferences.notificationSetAmount.toString()}
@@ -158,15 +197,31 @@ const NotificationPreferences = () => {
             </Typography>
           </View>
 
-          {renderNotificationTypeSelector()}
-          {renderAmountInput()}
+          {isLoading ? (
+            <View style={styles.loadingContainer}>
+              <Typography weight={500} size={16} color="#666">
+                Loading preferences...
+              </Typography>
+            </View>
+          ) : (
+            <>
+              {renderNotificationTypeSelector()}
+              {renderAmountInput()}
 
-          <Button
-            backgroundColor="#8C78F2"
-            text="Save Preferences"
-            onPress={handleSave}
-            width="100%"
-          />
+              <Button
+                backgroundColor="#8C78F2"
+                text={
+                  updatePreferencesMutation.isPending
+                    ? "Saving..."
+                    : "Save Preferences"
+                }
+                onPress={handleSave}
+                  width="100%"
+                  isLoading={updatePreferencesMutation.isPending}
+                // disabled={updatePreferencesMutation.isPending}
+              />
+            </>
+          )}
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaContainer>
@@ -176,11 +231,15 @@ const NotificationPreferences = () => {
 const styles = StyleSheet.create({
   scrollContainer: {
     padding: 20,
-    paddingBottom: 40,
+    paddingBottom: 80,
   },
   header: {
     alignItems: "center",
     marginBottom: 30,
+  },
+  loadingContainer: {
+    alignItems: "center",
+    paddingVertical: 40,
   },
   section: {
     backgroundColor: "#fff",

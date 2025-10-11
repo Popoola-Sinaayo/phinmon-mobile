@@ -20,8 +20,11 @@ import {
   useMonoConnect,
   MonoConnectButton,
 } from "@mono.co/connect-react-native";
-import { useMutation } from "@tanstack/react-query";
-import { exhangeMonoCodeForToken } from "@/requests/authentication";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  exhangeMonoCodeForToken,
+  disconnectAccount,
+} from "@/requests/authentication";
 import { showMessage } from "react-native-flash-message";
 import { useUserData } from "@/hooks/useUserData";
 
@@ -34,9 +37,10 @@ const ConnectedAccountsContent = () => {
   const { data: userData, isLoading, error } = useUserData();
   const [institutionSelected, setInstitutionSelected] = useState("");
   const { init, reauthorise } = useMonoConnect();
-  console.log(userData, "userData")
-  console.log(isLoading, "isLoading")
-  console.log(error, "error")
+  console.log(userData, "userData");
+  console.log(isLoading, "isLoading");
+  console.log(error, "error");
+   const queryClient = useQueryClient();
   // Get monoAccount data from userData
   const monoAccounts: ConnectedAccount[] = userData?.monoAccount || [];
 
@@ -48,6 +52,7 @@ const ConnectedAccountsContent = () => {
         message: "Bank Connected Successfully",
         type: "success",
       });
+      queryClient.invalidateQueries({ queryKey: ["userData"] });
       // The monoAccount data will be updated via the useUserData hook
       // No need to manually update local state
     },
@@ -59,6 +64,56 @@ const ConnectedAccountsContent = () => {
       });
     },
   });
+
+  const disconnectAccountMutation = useMutation({
+    mutationFn: disconnectAccount,
+    onSuccess: (data, variables) => {
+      console.log("Account disconnected:", data);
+      showMessage({
+        message: "Account disconnected successfully",
+        type: "success",
+      });
+      queryClient.invalidateQueries({ queryKey: ["userData"] });
+      // The monoAccount data will be updated via the useUserData hook
+      // No need to manually update local state
+    },
+    onError: (error) => {
+      console.error("Account disconnect error:", error);
+      showMessage({
+        message: "Failed to disconnect account. Please try again.",
+        type: "danger",
+      });
+    },
+  });
+
+  const config = {
+    publicKey: "test_pk_o0xzst25ptu1geuqq8qm",
+    scope: "auth",
+    // data: {
+    //   customer: { id: "P015152" },
+    // },
+    // accountId: "P015152",
+    onClose: () => alert("Widget closed"),
+    onSuccess: (data: any) => {
+      const code = data.getAuthCode();
+      console.log("Access code", code);
+    },
+    onEvent: (eventName: string, data: any) => {
+      // optional
+      console.log(eventName);
+      console.log(data);
+      if (eventName === "INSTITUTION_SELECTED") {
+        setInstitutionSelected(data.institution.name);
+      }
+      if (eventName === "SUCCESS") {
+        console.log(data.code);
+        exhangeMonoCodeForTokenMutation.mutate({
+          code: data.code,
+          institution: institutionSelected,
+        });
+      }
+    },
+  };
 
   const handleDisconnect = (accountId: string, institutionName: string) => {
     Alert.alert(
@@ -73,12 +128,7 @@ const ConnectedAccountsContent = () => {
           text: "Disconnect",
           style: "destructive",
           onPress: () => {
-            // TODO: Implement API call to disconnect account
-            // For now, just show success message
-            Alert.alert(
-              "Success",
-              `${institutionName} has been disconnected successfully!`
-            );
+            disconnectAccountMutation.mutate(accountId);
           },
         },
       ]
@@ -99,13 +149,14 @@ const ConnectedAccountsContent = () => {
           <Typography weight={600} size={16} color="#212121">
             {account.institution || "N/A"}
           </Typography>
-          <Typography weight={400} size={12} color="#666" marginTop={2}>
+          {/* <Typography weight={400} size={12} color="#666" marginTop={2}>
             Account Type: {account.id}
-          </Typography>
+          </Typography> */}
         </View>
         <TouchableOpacity
           style={styles.disconnectButton}
           onPress={() => handleDisconnect(account.id, account.institution)}
+          disabled={disconnectAccountMutation.isPending}
         >
           <XIcon color="#FF6B6B" size={20} />
         </TouchableOpacity>
@@ -202,10 +253,11 @@ const ConnectedAccountsContent = () => {
                 </Typography>
               </View>
             )}
-
-            <View style={styles.monoButtonContainer}>
-              <MonoConnectButton />
-            </View>
+            <MonoProvider {...config}>
+              <View style={styles.monoButtonContainer}>
+                <MonoConnectButton />
+              </View>
+            </MonoProvider>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

@@ -1,29 +1,87 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import ProfileIcon from "@/assets/svg/ProfileIcon";
 import Typography from "@/components/Typography";
 import Button from "@/components/Button";
 import SafeAreaContainer from "@/components/SafeAreaContainer";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updateAccountDetails } from "@/requests/authentication";
+import { showMessage } from "react-native-flash-message";
+import { useUserData } from "@/hooks/useUserData";
+import { setLocalName } from "@/utils/storage";
 
 const fakeCountry = "United States"; // Just a placeholder, can be replaced by user country
 
 const AccountDetails = () => {
-  const [name, setName] = useState("John Doe");
-  const [number, setNumber] = useState("+1 234 567 890");
+  const { data: userData, isLoading } = useUserData();
+  const queryClient = useQueryClient();
+  const [name, setName] = useState("");
+  const [number, setNumber] = useState("");
+  const [country, setCountry] = useState("");
   const [isEditing, setIsEditing] = useState(false);
-  const [tempName, setTempName] = useState(name);
-  const [tempNumber, setTempNumber] = useState(number);
+  const [tempName, setTempName] = useState("");
+  const [tempNumber, setTempNumber] = useState("");
+  const [tempCountry, setTempCountry] = useState("");
+
+  // Update fields when userData loads
+  useEffect(() => {
+    if (userData) {
+      const fullName = userData.fullName || "";
+      const phoneNumber = userData.phoneNumber || "";
+      const userCountry = userData.country || "United States";
+
+      setName(fullName);
+      setNumber(phoneNumber);
+      setCountry(userCountry);
+      setTempName(fullName);
+      setTempNumber(phoneNumber);
+      setTempCountry(userCountry);
+    }
+  }, [userData]);
+
+  const updateAccountDetailsMutation = useMutation({
+    mutationFn: updateAccountDetails,
+    onSuccess: (data) => {
+      console.log("Account details updated:", data);
+      showMessage({
+        message: "Account details updated successfully!",
+        type: "success",
+      });
+      queryClient.invalidateQueries({ queryKey: ["userData"] });
+      setLocalName(tempName?.split(" ")[0] || "");
+      setIsEditing(false);
+    },
+    onError: (error) => {
+      console.error("Account details update error:", error);
+      showMessage({
+        message: "Failed to update account details. Please try again.",
+        type: "danger",
+      });
+    },
+  });
 
   const handleSave = () => {
-    setName(tempName);
-    setNumber(tempNumber);
-    setIsEditing(false);
+    updateAccountDetailsMutation.mutate({
+      fullName: tempName,
+      phoneNumber: tempNumber,
+      country: tempCountry,
+    });
   };
 
   const handleCancel = () => {
     setTempName(name);
     setTempNumber(number);
+    setTempCountry(country);
     setIsEditing(false);
   };
 
@@ -39,74 +97,92 @@ const AccountDetails = () => {
             <Typography weight={600} size={24}>
               Account Details
             </Typography>
-
-            {/* {!isEditing && (
-              <TouchableOpacity
-                style={styles.editButton}
-                onPress={() => setIsEditing(true)}
-              >
-                <Text style={styles.editButtonText}>Update Account</Text>
-              </TouchableOpacity>
-                )} */}
           </View>
 
-          <View style={styles.section}>
-            <Text style={styles.label}>Name</Text>
-            {isEditing ? (
-              <TextInput
-                style={styles.input}
-                value={tempName}
-                onChangeText={setTempName}
-                placeholder="Enter your name"
-                placeholderTextColor="#BDBDBD"
-              />
-            ) : (
-              <Text style={styles.value}>{name}</Text>
-            )}
-          </View>
-
-          <View style={styles.section}>
-            <Text style={styles.label}>Number</Text>
-            {isEditing ? (
-              <TextInput
-                style={styles.input}
-                value={tempNumber}
-                onChangeText={setTempNumber}
-                placeholder="Phone number"
-                keyboardType="phone-pad"
-                placeholderTextColor="#BDBDBD"
-              />
-            ) : (
-              <Text style={styles.value}>{number}</Text>
-            )}
-          </View>
-
-          <View style={styles.section}>
-            <Text style={styles.label}>Country</Text>
-            <Text style={[styles.value, { color: "#908FA6" }]}>
-              {fakeCountry}
-            </Text>
-          </View>
-
-          {isEditing && (
-            <View style={styles.buttonRow}>
-              <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-                <Text style={styles.saveButtonText}>Save</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.cancelButton}
-                onPress={handleCancel}
-              >
-                <Text style={styles.cancelButtonText}>Cancel</Text>
-              </TouchableOpacity>
+          {isLoading ? (
+            <View style={styles.loadingContainer}>
+              <Typography weight={500} size={16} color="#666">
+                Loading account details...
+              </Typography>
             </View>
-          )}
-          {!isEditing && (
-            <Button
-              backgroundColor="#8C78F2"
-              text="Update Profile"
-              onPress={() => setIsEditing(true)}
-            />
+          ) : (
+            <>
+              <View style={styles.section}>
+                <Text style={styles.label}>Name</Text>
+                {isEditing ? (
+                  <TextInput
+                    style={styles.input}
+                    value={tempName}
+                    onChangeText={setTempName}
+                    placeholder="Enter your name"
+                    placeholderTextColor="#BDBDBD"
+                  />
+                ) : (
+                  <Text style={styles.value}>{name}</Text>
+                )}
+              </View>
+
+              <View style={styles.section}>
+                <Text style={styles.label}>Number</Text>
+                {isEditing ? (
+                  <TextInput
+                    style={styles.input}
+                    value={tempNumber}
+                    onChangeText={setTempNumber}
+                    placeholder="Phone number"
+                    keyboardType="phone-pad"
+                    placeholderTextColor="#BDBDBD"
+                  />
+                ) : (
+                  <Text style={styles.value}>{number}</Text>
+                )}
+              </View>
+
+              <View style={styles.section}>
+                <Text style={styles.label}>Country</Text>
+                {isEditing ? (
+                  <TextInput
+                    style={styles.input}
+                    value={tempCountry}
+                    onChangeText={setTempCountry}
+                    placeholder="Enter your country"
+                    placeholderTextColor="#BDBDBD"
+                  />
+                ) : (
+                  <Text style={styles.value}>{country}</Text>
+                )}
+              </View>
+
+              {isEditing && (
+                <View style={styles.buttonRow}>
+                  <TouchableOpacity
+                    style={styles.saveButton}
+                    onPress={handleSave}
+                    disabled={updateAccountDetailsMutation.isPending}
+                  >
+                    <Text style={styles.saveButtonText}>
+                      {updateAccountDetailsMutation.isPending
+                        ? "Saving..."
+                        : "Save"}
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.cancelButton}
+                    onPress={handleCancel}
+                    disabled={updateAccountDetailsMutation.isPending}
+                  >
+                    <Text style={styles.cancelButtonText}>Cancel</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+              {!isEditing && (
+                <Button
+                  backgroundColor="#8C78F2"
+                  text="Update Profile"
+                  onPress={() => setIsEditing(true)}
+                />
+              )}
+            </>
           )}
         </ScrollView>
       </KeyboardAvoidingView>
@@ -132,6 +208,10 @@ const styles = StyleSheet.create({
     marginBottom: 35,
     marginTop: 22,
     width: "100%",
+  },
+  loadingContainer: {
+    alignItems: "center",
+    paddingVertical: 40,
   },
   avatarShadow: {
     marginBottom: 8,
@@ -238,5 +318,3 @@ const styles = StyleSheet.create({
 });
 
 export default AccountDetails;
-
-

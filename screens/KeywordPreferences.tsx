@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -17,6 +17,10 @@ import PlusIcon from "@/assets/svg/PlusIcon";
 import XIcon from "@/assets/svg/XIcon";
 import Typography from "@/components/Typography";
 import Button from "@/components/Button";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updateKeywordPreferences } from "@/requests/authentication";
+import { showMessage } from "react-native-flash-message";
+import { useUserData } from "@/hooks/useUserData";
 
 interface UserMappedKeyWords {
   food: string[];
@@ -36,23 +40,69 @@ interface UserMappedKeyWords {
 }
 
 const KeywordPreferences = () => {
+  const { data: userData, isLoading } = useUserData();
+  const queryClient = useQueryClient();
   const [userMappedKeyWords, setUserMappedKeyWords] =
     useState<UserMappedKeyWords>({
-      food: ["dominos", "kfc", "eat", "snack", "restaurant", "cold stone"],
-      transport: ["uber", "bolt", "ride", "taxi", "bus", "train"],
-      shopping: ["order", "shop", "jumia", "cap", "drip", "shein"],
-      bills: ["electricity", "data", "airtime", "dstv", "phcn"],
-      entertainment: ["netflix", "spotify", "showmax", "movie", "cinema"],
-      savings: ["piggyvest", "save", "stash", "vault", "deposit", "cowrywise"],
-      health: ["pharmacy", "clinic", "gym", "fitness", "medicine"],
-      education: ["school", "tuition", "jamb", "lesson", "exam"],
-      subscriptions: ["subscription", "renewal", "apple", "google"],
-      gifting: ["gift", "dash", "to mum", "to dad", "allowance"],
-      home: ["rent", "house", "furniture", "appliance"],
-      income: ["salary", "payment", "credit", "earnings"],
-      bank_charges: ["charge", "sms", "fee", "vat", "stamp"],
-      donations: ["tithe", "offering", "church", "mosque", "donation"],
+      food: [],
+      transport: [],
+      shopping: [],
+      bills: [],
+      entertainment: [],
+      savings: [],
+      health: [],
+      education: [],
+      subscriptions: [],
+      gifting: [],
+      home: [],
+      income: [],
+      bank_charges: [],
+      donations: [],
     });
+
+  // Update keywords when userData loads
+  useEffect(() => {
+    if (userData?.preferences?.userMappedKeyWords) {
+      setUserMappedKeyWords({
+        food: userData.preferences.userMappedKeyWords.food || [],
+        transport: userData.preferences.userMappedKeyWords.transport || [],
+        shopping: userData.preferences.userMappedKeyWords.shopping || [],
+        bills: userData.preferences.userMappedKeyWords.bills || [],
+        entertainment:
+          userData.preferences.userMappedKeyWords.entertainment || [],
+        savings: userData.preferences.userMappedKeyWords.savings || [],
+        health: userData.preferences.userMappedKeyWords.health || [],
+        education: userData.preferences.userMappedKeyWords.education || [],
+        subscriptions:
+          userData.preferences.userMappedKeyWords.subscriptions || [],
+        gifting: userData.preferences.userMappedKeyWords.gifting || [],
+        home: userData.preferences.userMappedKeyWords.home || [],
+        income: userData.preferences.userMappedKeyWords.income || [],
+        bank_charges:
+          userData.preferences.userMappedKeyWords.bank_charges || [],
+        donations: userData.preferences.userMappedKeyWords.donations || [],
+      });
+    }
+  }, [userData]);
+
+  const updateKeywordsMutation = useMutation({
+    mutationFn: updateKeywordPreferences,
+    onSuccess: (data) => {
+      console.log("Keywords updated:", data);
+      showMessage({
+        message: "Keyword preferences updated successfully!",
+        type: "success",
+      });
+      queryClient.invalidateQueries({ queryKey: ["userData"] });
+    },
+    onError: (error) => {
+      console.error("Keywords update error:", error);
+      showMessage({
+        message: "Failed to update keywords. Please try again.",
+        type: "danger",
+      });
+    },
+  });
 
   const categories = [
     { key: "food", label: "Food & Dining", icon: "🍽️" },
@@ -72,7 +122,24 @@ const KeywordPreferences = () => {
   ];
 
   const handleSave = () => {
-    Alert.alert("Success", "Keyword preferences updated successfully!");
+    updateKeywordsMutation.mutate({
+      userMappedKeyWords: {
+        food: userMappedKeyWords.food,
+        transport: userMappedKeyWords.transport,
+        shopping: userMappedKeyWords.shopping,
+        bills: userMappedKeyWords.bills,
+        entertainment: userMappedKeyWords.entertainment,
+        savings: userMappedKeyWords.savings,
+        health: userMappedKeyWords.health,
+        education: userMappedKeyWords.education,
+        subscriptions: userMappedKeyWords.subscriptions,
+        gifting: userMappedKeyWords.gifting,
+        home: userMappedKeyWords.home,
+        income: userMappedKeyWords.income,
+        bank_charges: userMappedKeyWords.bank_charges,
+        donations: userMappedKeyWords.donations,
+      },
+    });
   };
 
   const addKeyword = (category: string, keyword: string) => {
@@ -177,29 +244,49 @@ const KeywordPreferences = () => {
             </Typography>
           </View>
 
-          <View style={styles.section}>
-            <Typography
-              weight={600}
-              size={16}
-              color="#8C78F2"
-              marginBottom={12}
-            >
-              Category Keywords
-            </Typography>
-            <Typography weight={400} size={14} color="#666" marginBottom={16}>
-              Add keywords for each category to improve transaction
-              categorization
-            </Typography>
+          {isLoading ? (
+            <View style={styles.loadingContainer}>
+              <Typography weight={500} size={16} color="#666">
+                Loading keywords...
+              </Typography>
+            </View>
+          ) : (
+            <>
+              <View style={styles.section}>
+                <Typography
+                  weight={600}
+                  size={16}
+                  color="#8C78F2"
+                  marginBottom={12}
+                >
+                  Category Keywords
+                </Typography>
+                <Typography
+                  weight={400}
+                  size={14}
+                  color="#666"
+                  marginBottom={16}
+                >
+                  Add keywords for each category to improve transaction
+                  categorization
+                </Typography>
 
-            {categories.map(renderKeywordSection)}
-          </View>
+                {categories.map(renderKeywordSection)}
+              </View>
 
-          <Button
-            backgroundColor="#8C78F2"
-            text="Update Preferences"
-            onPress={handleSave}
-            width="100%"
-          />
+              <Button
+                backgroundColor="#8C78F2"
+                text={
+                  updateKeywordsMutation.isPending
+                    ? "Updating..."
+                    : "Update Preferences"
+                }
+                onPress={handleSave}
+                width="100%"
+                isLoading={updateKeywordsMutation.isPending}
+              />
+            </>
+          )}
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaContainer>
@@ -214,6 +301,10 @@ const styles = StyleSheet.create({
   header: {
     alignItems: "center",
     marginBottom: 30,
+  },
+  loadingContainer: {
+    alignItems: "center",
+    paddingVertical: 40,
   },
   section: {
     backgroundColor: "#fff",

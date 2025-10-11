@@ -151,14 +151,15 @@ const Dashboard = () => {
               </TouchableOpacity>
             </View>
             {data?.transactions?.length > 0 ? (
-              <View style={{ flex: 1, paddingBottom: 220 }}>
+              <View style={{ flex: 1 }}>
                 <ScrollView
                   style={{
                     width: "90%",
                     alignSelf: "center",
-                    flexGrow: 1,
+                    // flexGrow: 1,
                     flex: 1,
                   }}
+                  contentContainerStyle={{ flexGrow: 1 }}
                 >
                   {data?.transactions?.map((t: any) => {
                     return (

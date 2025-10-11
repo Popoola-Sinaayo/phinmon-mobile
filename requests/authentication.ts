@@ -39,11 +39,14 @@ export const onboardUser = async (data: any) => {
   return response.data.data;
 };
 
-export const exhangeMonoCodeForToken = async (code: string) => {
+export const exhangeMonoCodeForToken = async (data: {
+  code: string;
+  institution: string;
+}) => {
   const token = await getToken();
   const response = await axiosInstance.post(
     "/user/monolink-token",
-    { code },
+    { code: data.code, institution: data.institution },
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -64,5 +67,81 @@ export const sendChatMessage = async (message: string) => {
       },
     }
   );
+  return response.data.data;
+};
+
+export const disconnectAccount = async (monoAccountId: string) => {
+  const token = await getToken();
+  const response = await axiosInstance.post(
+    "/user/disconnect-account",
+    { monoAccountId },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.data.data;
+};
+
+export const updateNotificationPreferences = async (preferencesData: {
+  notifications?: "all" | "over_set_amount" | "balance_below_amount" | "none";
+  notificationSetAmount?: number;
+}) => {
+  const token = await getToken();
+  const response = await axiosInstance.put(
+    "/user/preferences/notifications",
+    preferencesData,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.data.data;
+};
+
+export const updateKeywordPreferences = async (preferencesData: {
+  userMappedKeyWords?: {
+    food?: string[];
+    transport?: string[];
+    shopping?: string[];
+    bills?: string[];
+    entertainment?: string[];
+    savings?: string[];
+    health?: string[];
+    education?: string[];
+    subscriptions?: string[];
+    gifting?: string[];
+    home?: string[];
+    income?: string[];
+    bank_charges?: string[];
+    donations?: string[];
+  };
+}) => {
+  const token = await getToken();
+  const response = await axiosInstance.put(
+    "/user/preferences/notifications",
+    preferencesData,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.data.data;
+};
+
+export const updateAccountDetails = async (accountData: {
+  fullName: string;
+  phoneNumber: string;
+  country: string;
+}) => {
+  const token = await getToken();
+  const response = await axiosInstance.post("/user/onboarding", accountData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return response.data.data;
 };
