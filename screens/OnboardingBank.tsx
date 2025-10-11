@@ -52,7 +52,6 @@ const OnboardingBank = () => {
       const code = data.getAuthCode();
       console.log("Access code", code);
     },
-    reference: "Test_Reference", // optional
     onEvent: (eventName: string, data: any) => {
       // optional
       console.log(eventName);

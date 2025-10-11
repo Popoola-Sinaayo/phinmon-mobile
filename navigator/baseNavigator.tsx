@@ -14,6 +14,10 @@ import { getToken } from "@/utils/storage";
 import { useNavigation } from "@react-navigation/native";
 import { useLayoutEffect } from "react";
 import * as SplashScreen from "expo-splash-screen";
+import AccountDetails from "@/screens/AccountDetails";
+import NotificationPreferences from "@/screens/NotificationPreferences";
+import KeywordPreferences from "@/screens/KeywordPreferences";
+import ConnectedAccounts from "@/screens/ConnectedAccounts";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -51,6 +55,13 @@ const BaseNavigator = () => {
         component={OnboardingBankSuccess}
       />
       <Stack.Screen name="NavigatorTab" component={BottomNavigator} />
+      <Stack.Screen name="AccountDetails" component={AccountDetails} />
+      <Stack.Screen
+        name="NotificationPreferences"
+        component={NotificationPreferences}
+      />
+      <Stack.Screen name="KeywordPreferences" component={KeywordPreferences} />
+      <Stack.Screen name="ConnectedAccounts" component={ConnectedAccounts} />
 
       {/* Add your screens here */}
     </Stack.Navigator>

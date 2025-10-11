@@ -11,6 +11,10 @@ export type RootStackParamList = {
   OnboardingBank: undefined;
   OnboardingBankSuccess: undefined;
   NavigatorTab: undefined;
+  AccountDetails: undefined;
+  NotificationPreferences: undefined;
+  KeywordPreferences: undefined;
+  ConnectedAccounts: undefined;
 };
 
 export type RootTabParamList = {

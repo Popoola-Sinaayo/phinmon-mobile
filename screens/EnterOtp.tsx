@@ -6,7 +6,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { useMutation } from "@tanstack/react-query";
 import { verifyOtpDetails } from "@/requests/authentication";
 import { showMessage } from "react-native-flash-message";
-import { setToken } from "@/utils/storage";
+import { setLocalName, setToken } from "@/utils/storage";
 
 const EnterOtp = () => {
   const navigation = useNavigation();
@@ -39,9 +39,14 @@ const EnterOtp = () => {
       });
       setOtpSuccess(true)
       setToken(data.token)
+      setLocalName(data.user.fullName)
 
       setTimeout(() => {
-        navigation.navigate("OnboardingDetails");
+        if (data.user.isOnboarded) {
+          navigation.navigate("NavigatorTab");
+        } else {
+          navigation.navigate("OnboardingDetails");
+        }
       }, 2000);
     },
     onError: (error) => {

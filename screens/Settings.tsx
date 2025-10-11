@@ -5,10 +5,11 @@ import Typography from '@/components/Typography';
 import SettingsItem from "@/components/SettingsItem";
 import ProfileIcon from "@/assets/svg/ProfileIcon";
 import NotificationIcon from "@/assets/svg/NotificationIcon";
+import HashIcon from "@/assets/svg/HashIcon";
 import CreditCardIcon from "@/assets/svg/CreditCard";
 import LogoutIcon from "@/assets/svg/LogoutIcon";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 
 const Settings = () => {
   const navigation = useNavigation();
@@ -18,7 +19,7 @@ const Settings = () => {
       index: 0,
       routes: [{ name: "WelcomeAnimation" }],
     });
-  }
+  };
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.topContainer}>
@@ -30,17 +31,30 @@ const Settings = () => {
         <SettingsItem
           icon={<ProfileIcon />}
           label="Account Details"
-          onPress={() => {}}
+          onPress={() => {
+            navigation.navigate("AccountDetails");
+          }}
         />
         <SettingsItem
           icon={<NotificationIcon />}
           label="Notification Preferences"
-          onPress={() => {}}
+          onPress={() => {
+            navigation.navigate("NotificationPreferences");
+          }}
+        />
+        <SettingsItem
+          icon={<HashIcon />}
+          label="Keyword Preferences"
+          onPress={() => {
+            navigation.navigate("KeywordPreferences");
+          }}
         />
         <SettingsItem
           icon={<CreditCardIcon />}
           label="Connected Accounts"
-          onPress={() => {}}
+          onPress={() => {
+            navigation.navigate("ConnectedAccounts");
+          }}
         />
         <SettingsItem icon={<LogoutIcon />} label="Logout" onPress={logout} />
       </View>
