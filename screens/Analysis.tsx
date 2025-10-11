@@ -1,6 +1,6 @@
 import { Dimensions, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaContainer from "@/components/SafeAreaContainer";
 import CustomHeader from "@/components/CustomHeader";
 import {
   LineChart,
@@ -10,7 +10,7 @@ import {
   ContributionGraph,
   StackedBarChart,
 } from "react-native-chart-kit";
-import Typography from '@/components/Typography';
+import Typography from "@/components/Typography";
 import { Pie, PolarChart } from "victory-native";
 import DatePicker from "@/components/DatePicker";
 import Button from "@/components/Button";
@@ -80,10 +80,9 @@ const Analysis = () => {
       label: `Label ${index + 1}`,
     }));
 
-  console.log(DATA());
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaContainer>
       <View style={styles.topContainer}>
         <Typography weight={600} size={24}>
           Analysis
@@ -149,22 +148,17 @@ const Analysis = () => {
       ) : (
         <View style={styles.noAnalysisContainer}>
           <Typography weight={400} size={14} align="center">
-            No analysis yet — your wallet’s chilling 😎
+            No analysis yet — your wallet's chilling 😎
           </Typography>
         </View>
       )}
-    </SafeAreaView>
+    </SafeAreaContainer>
   );
 };
 
 export default Analysis;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "flex-start",
-    position: "relative",
-  },
   dateRangeSelectorContainer: {
     flexDirection: "row",
     alignSelf: "center",

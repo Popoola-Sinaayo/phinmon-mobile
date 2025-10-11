@@ -4,6 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import ProfileIcon from "@/assets/svg/ProfileIcon";
 import Typography from "@/components/Typography";
 import Button from "@/components/Button";
+import SafeAreaContainer from "@/components/SafeAreaContainer";
 
 const fakeCountry = "United States"; // Just a placeholder, can be replaced by user country
 
@@ -27,81 +28,89 @@ const AccountDetails = () => {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-      style={{ flex: 1, backgroundColor: "#F6F3FA" }}
-    >
-      <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.header}>
-          <ProfileIcon />
-          <Typography weight={600} size={24}>
-            Account Details
-          </Typography>
+    <SafeAreaContainer backgroundColor="#F6F3FA">
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        style={{ flex: 1 }}
+      >
+        <ScrollView contentContainerStyle={styles.container}>
+          <View style={styles.header}>
+            <ProfileIcon />
+            <Typography weight={600} size={24}>
+              Account Details
+            </Typography>
 
-          {/* {!isEditing && (
-            <TouchableOpacity
-              style={styles.editButton}
-              onPress={() => setIsEditing(true)}
-            >
-              <Text style={styles.editButtonText}>Update Account</Text>
-            </TouchableOpacity>
-              )} */}
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.label}>Name</Text>
-          {isEditing ? (
-            <TextInput
-              style={styles.input}
-              value={tempName}
-              onChangeText={setTempName}
-              placeholder="Enter your name"
-              placeholderTextColor="#BDBDBD"
-            />
-          ) : (
-            <Text style={styles.value}>{name}</Text>
-          )}
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.label}>Number</Text>
-          {isEditing ? (
-            <TextInput
-              style={styles.input}
-              value={tempNumber}
-              onChangeText={setTempNumber}
-              placeholder="Phone number"
-              keyboardType="phone-pad"
-              placeholderTextColor="#BDBDBD"
-            />
-          ) : (
-            <Text style={styles.value}>{number}</Text>
-          )}
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.label}>Country</Text>
-          <Text style={[styles.value, { color: "#908FA6" }]}>
-            {fakeCountry}
-          </Text>
-        </View>
-
-        {isEditing && (
-          <View style={styles.buttonRow}>
-            <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-              <Text style={styles.saveButtonText}>Save</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.cancelButton}
-              onPress={handleCancel}
-            >
-              <Text style={styles.cancelButtonText}>Cancel</Text>
-            </TouchableOpacity>
+            {/* {!isEditing && (
+              <TouchableOpacity
+                style={styles.editButton}
+                onPress={() => setIsEditing(true)}
+              >
+                <Text style={styles.editButtonText}>Update Account</Text>
+              </TouchableOpacity>
+                )} */}
           </View>
-        )}
-        {!isEditing && <Button backgroundColor="#8C78F2" text="Update Profile" onPress={() => setIsEditing(true)} />}
-      </ScrollView>
-    </KeyboardAvoidingView>
+
+          <View style={styles.section}>
+            <Text style={styles.label}>Name</Text>
+            {isEditing ? (
+              <TextInput
+                style={styles.input}
+                value={tempName}
+                onChangeText={setTempName}
+                placeholder="Enter your name"
+                placeholderTextColor="#BDBDBD"
+              />
+            ) : (
+              <Text style={styles.value}>{name}</Text>
+            )}
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.label}>Number</Text>
+            {isEditing ? (
+              <TextInput
+                style={styles.input}
+                value={tempNumber}
+                onChangeText={setTempNumber}
+                placeholder="Phone number"
+                keyboardType="phone-pad"
+                placeholderTextColor="#BDBDBD"
+              />
+            ) : (
+              <Text style={styles.value}>{number}</Text>
+            )}
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.label}>Country</Text>
+            <Text style={[styles.value, { color: "#908FA6" }]}>
+              {fakeCountry}
+            </Text>
+          </View>
+
+          {isEditing && (
+            <View style={styles.buttonRow}>
+              <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+                <Text style={styles.saveButtonText}>Save</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={handleCancel}
+              >
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+          {!isEditing && (
+            <Button
+              backgroundColor="#8C78F2"
+              text="Update Profile"
+              onPress={() => setIsEditing(true)}
+            />
+          )}
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaContainer>
   );
 };
 
@@ -109,7 +118,6 @@ const styles = StyleSheet.create({
   container: {
     padding: 32,
     alignItems: "center",
-    backgroundColor: "#F6F3FA",
     minHeight: "100%",
   },
   topContainer: {
@@ -147,7 +155,7 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "#fff",
     borderRadius: 18,
-      padding: 20,
+    padding: 20,
     paddingVertical: 8,
     marginBottom: 20,
     shadowColor: "#bfb4f9",

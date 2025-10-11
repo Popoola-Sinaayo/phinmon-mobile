@@ -55,4 +55,58 @@ export const setLocalName = async (name: string) => {
   }
 };
 
+export const getChatMessages = async () => {
+  try {
+    const messages = await AsyncStorage.getItem("chatMessages");
+    return messages ? JSON.parse(messages) : [];
+  } catch (error) {
+    console.error("Error getting chat messages:", error);
+    return [];
+  }
+};
+
+export const saveChatMessage = async (message: any) => {
+  try {
+    const existingMessages = await getChatMessages();
+    const updatedMessages = [...existingMessages, message];
+    await AsyncStorage.setItem("chatMessages", JSON.stringify(updatedMessages));
+  } catch (error) {
+    console.error("Error saving chat message:", error);
+  }
+};
+
+export const clearChatMessages = async () => {
+  try {
+    await AsyncStorage.removeItem("chatMessages");
+  } catch (error) {
+    console.error("Error clearing chat messages:", error);
+  }
+};
+
+export const getUserData = async () => {
+  try {
+    const userData = await AsyncStorage.getItem("userData");
+    return userData ? JSON.parse(userData) : null;
+  } catch (error) {
+    console.error("Error getting user data:", error);
+    return null;
+  }
+};
+
+export const saveUserData = async (userData: any) => {
+  try {
+    await AsyncStorage.setItem("userData", JSON.stringify(userData));
+  } catch (error) {
+    console.error("Error saving user data:", error);
+  }
+};
+
+export const clearUserData = async () => {
+  try {
+    await AsyncStorage.removeItem("userData");
+  } catch (error) {
+    console.error("Error clearing user data:", error);
+  }
+};
+
 

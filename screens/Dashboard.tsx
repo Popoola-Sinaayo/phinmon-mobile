@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import CustomHeader from "@/components/CustomHeader";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaContainer from "@/components/SafeAreaContainer";
 import Typography from "@/components/Typography";
 import QuickTips from "@/components/QuickTips";
 import { getLocalName } from "@/utils/storage";
@@ -69,134 +69,140 @@ const Dashboard = () => {
     });
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.container}>
-        {/* <CustomHeader /> */}
-        <View style={{ width: "90%", alignSelf: "center", marginTop: 20 }}>
-          <Typography weight={500} size={24}>
-            Welcome {name}
-          </Typography>
-        </View>
-        {isLoading ? (
-          <DashboardSkeleton />
-        ) : (
-          <>
-            <View style={{ position: "relative", marginBottom: 30 }}>
-              {!isLoading && <View style={styles.topContainerOverlay} />}
-
-              <View style={styles.topContainer}>
-                <Typography
-                  text="Spending Aura ✨"
-                  size={12}
-                  weight={800}
-                  color="#FFFFFF"
-                  align="left"
-                />
-                <Typography
-                  weight={800}
-                  color="#FFFFFF"
-                  size={26}
-                  align="left"
-                  marginTop={10}
-                >
-                  {data?.type}
-                </Typography>
-                <View
-                  style={{
-                    // flexDirection: "row",
-                    // alignItems: "center",
-                    // gap: 3,
-                    width: "65%",
-                  }}
-                >
-                  <Typography color="#FFFFFF" size={12}>
-                    {data?.desc}
-                  </Typography>
-                </View>
-                <View
-                  style={{
-                    position: "absolute",
-                    right: 10,
-                    bottom: 20,
-                    alignItems: "center",
-                  }}
-                >
-                  <TouchableOpacity onPress={() => refetchSyncTransaction()}>
-                    <Animated.View
-                      style={[
-                        isSyncLoading && {
-                          transform: [{ rotate }],
-                        },
-                      ]}
-                    >
-                      <Animated.Image
-                        source={require("@/assets/sync.png")}
-                        style={{ width: 36, height: 36 }}
-                      />
-                    </Animated.View>
-                  </TouchableOpacity>
-                  <Typography color="#ffffff">Tap to Sync ⚡</Typography>
-                </View>
-              </View>
-            </View>
-            <QuickTips />
-            <View style={styles.historyContainer}>
-              <View style={styles.historyItemHeader}>
-                <Typography weight={600}>History</Typography>
-                <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate("TransactionHistory" as any)
-                  }
-                >
-                  <Typography color="#8C78F2" weight={500}>
-                    See All
-                  </Typography>
-                </TouchableOpacity>
-              </View>
-              {false ? (
-                <View style={{ flex: 1, paddingBottom: 220 }}>
-                  <ScrollView
-                    style={{ width: "90%", alignSelf: "center", flexGrow: 1 }}
-                  >
-                    <TransactionItem category="food" />
-                    <TransactionItem category="savings" />
-                    <TransactionItem category="transport" />
-                    <TransactionItem category="donations" />
-                    <TransactionItem category="income" />
-                    <TransactionItem category="home" />
-                    <TransactionItem category="giftings" />
-                    <TransactionItem category="subscriptions" />
-                    <TransactionItem category="health" />
-                    <TransactionItem category="bills" />
-                    <TransactionItem category="entertainment" />
-                    <TransactionItem category="shopping" />
-                  </ScrollView>
-                </View>
-              ) : (
-                <View style={styles.noTransactionsContainer}>
-                  <Typography weight={400} size={14} align="center">
-                    No transactions yet — your wallet’s chilling 😎
-                  </Typography>
-                </View>
-              )}
-            </View>
-          </>
-        )}
+    <SafeAreaContainer>
+      {/* <CustomHeader /> */}
+      <View style={{ width: "90%", alignSelf: "center", marginTop: 20 }}>
+        <Typography weight={500} size={24}>
+          Welcome {name}
+        </Typography>
       </View>
-    </SafeAreaView>
+      {isLoading ? (
+        <DashboardSkeleton />
+      ) : (
+        <>
+          <View style={{ position: "relative", marginBottom: 30 }}>
+            {!isLoading && <View style={styles.topContainerOverlay} />}
+
+            <View style={styles.topContainer}>
+              <Typography
+                text="Spending Aura ✨"
+                size={12}
+                weight={800}
+                color="#FFFFFF"
+                align="left"
+              />
+              <Typography
+                weight={800}
+                color="#FFFFFF"
+                size={26}
+                align="left"
+                marginTop={10}
+              >
+                {data?.class?.type}
+              </Typography>
+              <View
+                style={{
+                  // flexDirection: "row",
+                  // alignItems: "center",
+                  // gap: 3,
+                  width: "65%",
+                }}
+              >
+                <Typography color="#FFFFFF" size={12}>
+                  {data?.class?.desc}
+                </Typography>
+              </View>
+              <View
+                style={{
+                  position: "absolute",
+                  right: 10,
+                  bottom: 20,
+                  alignItems: "center",
+                }}
+              >
+                <TouchableOpacity onPress={() => refetchSyncTransaction()}>
+                  <Animated.View
+                    style={[
+                      isSyncLoading && {
+                        transform: [{ rotate }],
+                      },
+                    ]}
+                  >
+                    <Animated.Image
+                      source={require("@/assets/sync.png")}
+                      style={{ width: 36, height: 36 }}
+                    />
+                  </Animated.View>
+                </TouchableOpacity>
+                <Typography color="#ffffff">Tap to Sync ⚡</Typography>
+              </View>
+            </View>
+          </View>
+          <QuickTips description={data?.advice} />
+          <View style={styles.historyContainer}>
+            <View style={styles.historyItemHeader}>
+              <Typography weight={600}>History</Typography>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("TransactionHistory" as any)}
+              >
+                <Typography color="#8C78F2" weight={500}>
+                  See All
+                </Typography>
+              </TouchableOpacity>
+            </View>
+            {data?.transactions?.length > 0 ? (
+              <View style={{ flex: 1, paddingBottom: 220 }}>
+                <ScrollView
+                  style={{
+                    width: "90%",
+                    alignSelf: "center",
+                    flexGrow: 1,
+                    flex: 1,
+                  }}
+                >
+                  {data?.transactions?.map((t: any) => {
+                    return (
+                      <TransactionItem
+                        category={t.category}
+                        description={t.description}
+                        amount={t.amount}
+                        currencyCode={t.currency}
+                        date={t.date}
+                        type={t.type}
+                      />
+                    );
+                  })}
+                  {/* <TransactionItem category="food" />
+                <TransactionItem category="savings" />
+                <TransactionItem category="transport" />
+                <TransactionItem category="donations" />
+                <TransactionItem category="income" />
+                <TransactionItem category="home" />
+                <TransactionItem category="giftings" />
+                <TransactionItem category="subscriptions" />
+                <TransactionItem category="health" />
+                <TransactionItem category="bills" />
+                <TransactionItem category="entertainment" />
+                <TransactionItem category="shopping" /> */}
+                </ScrollView>
+              </View>
+            ) : (
+              <View style={styles.noTransactionsContainer}>
+                <Typography weight={400} size={14} align="center">
+                  No transactions yet — your wallet's chilling 😎
+                </Typography>
+              </View>
+            )}
+          </View>
+        </>
+      )}
+    </SafeAreaContainer>
   );
 };
 
 export default Dashboard;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "flex-start",
-    // paddingBottom: 100,
-    // backgroundColor: "red"
-    backgroundColor: "#f7f7f7",
-  },
   topContainer: {
     backgroundColor: "#8C78F2",
     borderRadius: 21,

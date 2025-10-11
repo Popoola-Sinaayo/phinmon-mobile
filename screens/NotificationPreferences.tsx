@@ -10,7 +10,7 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaContainer from "@/components/SafeAreaContainer";
 import { Ionicons } from "@expo/vector-icons";
 import NotificationIcon from "@/assets/svg/NotificationIcon";
 import Typography from "@/components/Typography";
@@ -27,19 +27,32 @@ const NotificationPreferences = () => {
     notificationSetAmount: 100,
   });
 
-
   const notificationTypes = [
-    { key: "all", label: "All Notifications", description: "Get notified for all transactions" },
-    { key: "over_set_amount", label: "Over Set Amount", description: "Only when spending exceeds amount" },
-    { key: "balance_below_amount", label: "Balance Below Amount", description: "When balance falls below amount" },
-    { key: "none", label: "No Notifications", description: "Turn off all notifications" },
+    {
+      key: "all",
+      label: "All Notifications",
+      description: "Get notified for all transactions",
+    },
+    {
+      key: "over_set_amount",
+      label: "Over Set Amount",
+      description: "Only when spending exceeds amount",
+    },
+    {
+      key: "balance_below_amount",
+      label: "Balance Below Amount",
+      description: "When balance falls below amount",
+    },
+    {
+      key: "none",
+      label: "No Notifications",
+      description: "Turn off all notifications",
+    },
   ];
-
 
   const handleSave = () => {
     Alert.alert("Success", "Notification preferences updated successfully!");
   };
-
 
   const renderNotificationTypeSelector = () => (
     <View style={styles.section}>
@@ -51,22 +64,35 @@ const NotificationPreferences = () => {
           key={type.key}
           style={[
             styles.optionCard,
-            preferences.notifications === type.key && styles.selectedOption
+            preferences.notifications === type.key && styles.selectedOption,
           ]}
-          onPress={() => setPreferences(prev => ({ ...prev, notifications: type.key as any }))}
+          onPress={() =>
+            setPreferences((prev) => ({
+              ...prev,
+              notifications: type.key as any,
+            }))
+          }
         >
           <View style={styles.optionContent}>
-            <Typography weight={600} size={16} color={preferences.notifications === type.key ? "#8C78F2" : "#212121"}>
+            <Typography
+              weight={600}
+              size={16}
+              color={
+                preferences.notifications === type.key ? "#8C78F2" : "#212121"
+              }
+            >
               {type.label}
             </Typography>
             <Typography weight={400} size={14} color="#666" marginTop={4}>
               {type.description}
             </Typography>
           </View>
-          <View style={[
-            styles.radioButton,
-            preferences.notifications === type.key && styles.selectedRadio
-          ]}>
+          <View
+            style={[
+              styles.radioButton,
+              preferences.notifications === type.key && styles.selectedRadio,
+            ]}
+          >
             {preferences.notifications === type.key && (
               <View style={styles.radioInner} />
             )}
@@ -77,7 +103,10 @@ const NotificationPreferences = () => {
   );
 
   const renderAmountInput = () => {
-    if (preferences.notifications === "over_set_amount" || preferences.notifications === "balance_below_amount") {
+    if (
+      preferences.notifications === "over_set_amount" ||
+      preferences.notifications === "balance_below_amount"
+    ) {
       return (
         <View style={styles.section}>
           <Typography weight={600} size={16} color="#8C78F2" marginBottom={12}>
@@ -90,7 +119,10 @@ const NotificationPreferences = () => {
               value={preferences.notificationSetAmount.toString()}
               onChangeText={(text) => {
                 const amount = parseFloat(text) || 0;
-                setPreferences(prev => ({ ...prev, notificationSetAmount: amount }));
+                setPreferences((prev) => ({
+                  ...prev,
+                  notificationSetAmount: amount,
+                }));
               }}
               keyboardType="numeric"
               placeholder="0.00"
@@ -103,9 +135,8 @@ const NotificationPreferences = () => {
     return null;
   };
 
-
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaContainer backgroundColor="#F6F3FA">
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         style={{ flex: 1 }}
@@ -116,7 +147,13 @@ const NotificationPreferences = () => {
             <Typography weight={600} size={24} marginTop={12}>
               Notification Preferences
             </Typography>
-            <Typography weight={400} size={14} color="#666" marginTop={8} align="center">
+            <Typography
+              weight={400}
+              size={14}
+              color="#666"
+              marginTop={8}
+              align="center"
+            >
               Customize how and when you receive notifications
             </Typography>
           </View>
@@ -132,15 +169,11 @@ const NotificationPreferences = () => {
           />
         </ScrollView>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </SafeAreaContainer>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F6F3FA",
-  },
   scrollContainer: {
     padding: 20,
     paddingBottom: 40,

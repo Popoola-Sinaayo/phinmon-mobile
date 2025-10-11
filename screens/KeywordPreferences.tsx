@@ -10,7 +10,7 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaContainer from "@/components/SafeAreaContainer";
 import { Ionicons } from "@expo/vector-icons";
 import HashIcon from "@/assets/svg/HashIcon";
 import PlusIcon from "@/assets/svg/PlusIcon";
@@ -36,23 +36,23 @@ interface UserMappedKeyWords {
 }
 
 const KeywordPreferences = () => {
-  const [userMappedKeyWords, setUserMappedKeyWords] = useState<UserMappedKeyWords>({
-    food: ["dominos", "kfc", "eat", "snack", "restaurant", "cold stone"],
-    transport: ["uber", "bolt", "ride", "taxi", "bus", "train"],
-    shopping: ["order", "shop", "jumia", "cap", "drip", "shein"],
-    bills: ["electricity", "data", "airtime", "dstv", "phcn"],
-    entertainment: ["netflix", "spotify", "showmax", "movie", "cinema"],
-    savings: ["piggyvest", "save", "stash", "vault", "deposit", "cowrywise"],
-    health: ["pharmacy", "clinic", "gym", "fitness", "medicine"],
-    education: ["school", "tuition", "jamb", "lesson", "exam"],
-    subscriptions: ["subscription", "renewal", "apple", "google"],
-    gifting: ["gift", "dash", "to mum", "to dad", "allowance"],
-    home: ["rent", "house", "furniture", "appliance"],
-    income: ["salary", "payment", "credit", "earnings"],
-    bank_charges: ["charge", "sms", "fee", "vat", "stamp"],
-    donations: ["tithe", "offering", "church", "mosque", "donation"],
-  });
-
+  const [userMappedKeyWords, setUserMappedKeyWords] =
+    useState<UserMappedKeyWords>({
+      food: ["dominos", "kfc", "eat", "snack", "restaurant", "cold stone"],
+      transport: ["uber", "bolt", "ride", "taxi", "bus", "train"],
+      shopping: ["order", "shop", "jumia", "cap", "drip", "shein"],
+      bills: ["electricity", "data", "airtime", "dstv", "phcn"],
+      entertainment: ["netflix", "spotify", "showmax", "movie", "cinema"],
+      savings: ["piggyvest", "save", "stash", "vault", "deposit", "cowrywise"],
+      health: ["pharmacy", "clinic", "gym", "fitness", "medicine"],
+      education: ["school", "tuition", "jamb", "lesson", "exam"],
+      subscriptions: ["subscription", "renewal", "apple", "google"],
+      gifting: ["gift", "dash", "to mum", "to dad", "allowance"],
+      home: ["rent", "house", "furniture", "appliance"],
+      income: ["salary", "payment", "credit", "earnings"],
+      bank_charges: ["charge", "sms", "fee", "vat", "stamp"],
+      donations: ["tithe", "offering", "church", "mosque", "donation"],
+    });
 
   const categories = [
     { key: "food", label: "Food & Dining", icon: "🍽️" },
@@ -77,22 +77,25 @@ const KeywordPreferences = () => {
 
   const addKeyword = (category: string, keyword: string) => {
     if (keyword.trim()) {
-      setUserMappedKeyWords(prev => ({
+      setUserMappedKeyWords((prev) => ({
         ...prev,
-        [category]: [...prev[category as keyof typeof prev], keyword.trim()]
+        [category]: [...prev[category as keyof typeof prev], keyword.trim()],
       }));
     }
   };
 
   const removeKeyword = (category: string, index: number) => {
-    setUserMappedKeyWords(prev => ({
+    setUserMappedKeyWords((prev) => ({
       ...prev,
-      [category]: prev[category as keyof typeof prev].filter((_, i) => i !== index)
+      [category]: prev[category as keyof typeof prev].filter(
+        (_, i) => i !== index
+      ),
     }));
   };
 
   const renderKeywordSection = (category: any) => {
-    const keywords = userMappedKeyWords[category.key as keyof typeof userMappedKeyWords];
+    const keywords =
+      userMappedKeyWords[category.key as keyof typeof userMappedKeyWords];
     const [newKeyword, setNewKeyword] = useState("");
 
     return (
@@ -103,7 +106,7 @@ const KeywordPreferences = () => {
             {category.label}
           </Typography>
         </View>
-        
+
         <View style={styles.keywordInputContainer}>
           <TextInput
             style={styles.keywordInput}
@@ -147,13 +150,13 @@ const KeywordPreferences = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaContainer backgroundColor="#F6F3FA">
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
         keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       >
-        <ScrollView 
+        <ScrollView
           contentContainerStyle={styles.scrollContainer}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
@@ -163,19 +166,31 @@ const KeywordPreferences = () => {
             <Typography weight={600} size={24} marginTop={12}>
               Keyword Preferences
             </Typography>
-            <Typography weight={400} size={14} color="#666" marginTop={8} align="center">
+            <Typography
+              weight={400}
+              size={14}
+              color="#666"
+              marginTop={8}
+              align="center"
+            >
               Add keywords to help categorize your transactions automatically
             </Typography>
           </View>
 
           <View style={styles.section}>
-            <Typography weight={600} size={16} color="#8C78F2" marginBottom={12}>
+            <Typography
+              weight={600}
+              size={16}
+              color="#8C78F2"
+              marginBottom={12}
+            >
               Category Keywords
             </Typography>
             <Typography weight={400} size={14} color="#666" marginBottom={16}>
-              Add keywords for each category to improve transaction categorization
+              Add keywords for each category to improve transaction
+              categorization
             </Typography>
-            
+
             {categories.map(renderKeywordSection)}
           </View>
 
@@ -187,18 +202,14 @@ const KeywordPreferences = () => {
           />
         </ScrollView>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </SafeAreaContainer>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F6F3FA",
-  },
   scrollContainer: {
     padding: 20,
-    paddingBottom: 40,
+    paddingBottom: 80,
   },
   header: {
     alignItems: "center",
@@ -217,7 +228,7 @@ const styles = StyleSheet.create({
   },
   keywordSection: {
     marginBottom: 24,
-    paddingBottom: 16,
+    paddingBottom: 26,
     borderBottomWidth: 1,
     borderBottomColor: "#F0F0F0",
   },

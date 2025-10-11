@@ -9,7 +9,7 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaContainer from "@/components/SafeAreaContainer";
 import { Ionicons } from "@expo/vector-icons";
 import CreditCardIcon from "@/assets/svg/CreditCard";
 import XIcon from "@/assets/svg/XIcon";
@@ -23,35 +23,23 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import { exhangeMonoCodeForToken } from "@/requests/authentication";
 import { showMessage } from "react-native-flash-message";
+import { useUserData } from "@/hooks/useUserData";
 
 interface ConnectedAccount {
   id: string;
-  bankName: string;
-  connectionId: string;
-  connectedDate: string;
+  institution: string;
 }
 
 const ConnectedAccountsContent = () => {
-  const [connectedAccounts, setConnectedAccounts] = useState<
-    ConnectedAccount[]
-  >([
-    {
-      id: "1",
-      bankName: "Chase Bank",
-      connectionId: "CHASE_123456789",
-      connectedDate: "2024-01-15",
-    },
-    {
-      id: "2",
-      bankName: "Bank of America",
-      connectionId: "BOA_987654321",
-      connectedDate: "2024-02-20",
-    },
-  ]);
-
+  const { data: userData, isLoading, error } = useUserData();
   const [institutionSelected, setInstitutionSelected] = useState("");
   const { init, reauthorise } = useMonoConnect();
-  
+  console.log(userData, "userData")
+  console.log(isLoading, "isLoading")
+  console.log(error, "error")
+  // Get monoAccount data from userData
+  const monoAccounts: ConnectedAccount[] = userData?.monoAccount || [];
+
   const exhangeMonoCodeForTokenMutation = useMutation({
     mutationFn: exhangeMonoCodeForToken,
     onSuccess: (data) => {
@@ -60,16 +48,8 @@ const ConnectedAccountsContent = () => {
         message: "Bank Connected Successfully",
         type: "success",
       });
-      
-      // Add the new account to the list
-      const newAccount: ConnectedAccount = {
-        id: Date.now().toString(),
-        bankName: institutionSelected || "Connected Bank",
-        connectionId: `MONO_${Date.now()}`,
-        connectedDate: new Date().toISOString().split('T')[0],
-      };
-      
-      setConnectedAccounts(prev => [...prev, newAccount]);
+      // The monoAccount data will be updated via the useUserData hook
+      // No need to manually update local state
     },
     onError: (error) => {
       console.error("Bank connection error:", error);
@@ -80,10 +60,10 @@ const ConnectedAccountsContent = () => {
     },
   });
 
-  const handleDisconnect = (accountId: string, bankName: string) => {
+  const handleDisconnect = (accountId: string, institutionName: string) => {
     Alert.alert(
       "Disconnect Account",
-      `Are you sure you want to disconnect ${bankName}?`,
+      `Are you sure you want to disconnect ${institutionName}?`,
       [
         {
           text: "Cancel",
@@ -93,12 +73,11 @@ const ConnectedAccountsContent = () => {
           text: "Disconnect",
           style: "destructive",
           onPress: () => {
-            setConnectedAccounts((prev) =>
-              prev.filter((account) => account.id !== accountId)
-            );
+            // TODO: Implement API call to disconnect account
+            // For now, just show success message
             Alert.alert(
               "Success",
-              `${bankName} has been disconnected successfully!`
+              `${institutionName} has been disconnected successfully!`
             );
           },
         },
@@ -106,50 +85,48 @@ const ConnectedAccountsContent = () => {
     );
   };
 
-
   const handleSave = () => {
     Alert.alert("Success", "Connected accounts updated successfully!");
   };
 
-  const renderAccountCard = (account: ConnectedAccount) => (
-    <View key={account.id} style={styles.accountCard}>
+  const renderAccountCard = (account: ConnectedAccount, index: number) => (
+    <View key={`${account.id}-${index}`} style={styles.accountCard}>
       <View style={styles.accountHeader}>
         <View style={styles.bankIconContainer}>
           <CreditCardIcon />
         </View>
         <View style={styles.accountInfo}>
           <Typography weight={600} size={16} color="#212121">
-            {account.bankName}
+            {account.institution || "N/A"}
           </Typography>
           <Typography weight={400} size={12} color="#666" marginTop={2}>
-            Connected: {account.connectedDate}
+            Account Type: {account.id}
           </Typography>
         </View>
         <TouchableOpacity
           style={styles.disconnectButton}
-          onPress={() => handleDisconnect(account.id, account.bankName)}
+          onPress={() => handleDisconnect(account.id, account.institution)}
         >
           <XIcon color="#FF6B6B" size={20} />
         </TouchableOpacity>
       </View>
-      
+
       <View style={styles.connectionDetails}>
         <Typography weight={500} size={14} color="#8C78F2">
-          Connection ID: {account.connectionId}
+          ID: {account.id}
         </Typography>
       </View>
     </View>
   );
 
-
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaContainer backgroundColor="#F6F3FA">
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
         keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       >
-        <ScrollView 
+        <ScrollView
           contentContainerStyle={styles.scrollContainer}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
@@ -159,30 +136,68 @@ const ConnectedAccountsContent = () => {
             <Typography weight={600} size={24} marginTop={12}>
               Connected Accounts
             </Typography>
-            <Typography weight={400} size={14} color="#666" marginTop={8} align="center">
+            <Typography
+              weight={400}
+              size={14}
+              color="#666"
+              marginTop={8}
+              align="center"
+            >
               Manage your connected bank accounts
             </Typography>
           </View>
 
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <Typography weight={600} size={16} color="#8C78F2" marginBottom={4}>
-                Connected Accounts ({connectedAccounts.length})
+              <Typography
+                weight={600}
+                size={16}
+                color="#8C78F2"
+                marginBottom={4}
+              >
+                Connected Accounts ({monoAccounts.length})
               </Typography>
               <Typography weight={400} size={14} color="#666" marginBottom={16}>
                 View and manage your connected bank accounts
               </Typography>
             </View>
-            
-            {connectedAccounts.length > 0 ? (
-              connectedAccounts.map(renderAccountCard)
+
+            {isLoading ? (
+              <View style={styles.emptyState}>
+                <Typography weight={500} size={16} color="#666">
+                  Loading connected accounts...
+                </Typography>
+              </View>
+            ) : error ? (
+              <View style={styles.emptyState}>
+                <Typography weight={500} size={16} color="#d43d49">
+                  Failed to load accounts
+                </Typography>
+                <Typography
+                  weight={400}
+                  size={14}
+                  color="#999"
+                  marginTop={4}
+                  align="center"
+                >
+                  Please try again later
+                </Typography>
+              </View>
+            ) : monoAccounts.length > 0 ? (
+              monoAccounts.map(renderAccountCard)
             ) : (
               <View style={styles.emptyState}>
                 <CreditCardIcon />
                 <Typography weight={500} size={16} color="#666" marginTop={12}>
                   No connected accounts
                 </Typography>
-                <Typography weight={400} size={14} color="#999" marginTop={4} align="center">
+                <Typography
+                  weight={400}
+                  size={14}
+                  color="#999"
+                  marginTop={4}
+                  align="center"
+                >
                   Connect your first bank account to get started
                 </Typography>
               </View>
@@ -194,7 +209,7 @@ const ConnectedAccountsContent = () => {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </SafeAreaContainer>
   );
 };
 
@@ -228,10 +243,6 @@ const ConnectedAccounts = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F6F3FA",
-  },
   scrollContainer: {
     padding: 20,
     paddingBottom: 40,

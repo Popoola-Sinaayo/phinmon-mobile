@@ -3,7 +3,7 @@ import axiosInstance from ".";
 
 export const getUserSpendingClass = async () => {
   const token = await getToken();
-  const response = await axiosInstance.get("/class", {
+  const response = await axiosInstance.get("/user/class", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -13,10 +13,42 @@ export const getUserSpendingClass = async () => {
 
 export const syncTransactions = async () => {
   const token = await getToken();
-  const response = await axiosInstance.get("/sync/datetime", {
+  const response = await axiosInstance.get("/user/sync/datetime", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
+  return response.data.data;
+};
+
+export const getTransactions = async () => {
+  const token = await getToken();
+  const response = await axiosInstance.get("/user/transactions", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data.data;
+};
+
+export const updateTransactionCategory = async (
+  transactionId: string,
+  category: string
+) => {
+  const token = await getToken();
+  const response = await axiosInstance.post(
+    "/user/transaction/update",
+    {
+      transactionId,
+      updateData: {
+        category,
+      },
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
   return response.data.data;
 };

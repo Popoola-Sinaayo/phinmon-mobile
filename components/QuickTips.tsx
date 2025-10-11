@@ -1,27 +1,85 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
-import Typography from './Typography'
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import Typography from "./Typography";
 
-const QuickTips = () => {
+const QuickTips: React.FC<{ description: string }> = ({ description }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const maxLength = 100; // Character limit before showing "Read more"
+
+  const shouldShowReadMore = description?.length > maxLength;
+  const displayText =
+    isExpanded || !shouldShowReadMore
+      ? description
+      : description?.substring(0, maxLength) + "...";
+
+  const toggleExpanded = () => {
+    setIsExpanded(!isExpanded);
+  };
+
   return (
     <View style={styles.container}>
-      <Typography weight={600}>Quick Tips</Typography>
-      <Typography marginTop={10} marginBottom={10}>You need to save more this weekend...</Typography>
+      <View style={styles.header}>
+        <View style={styles.iconContainer}>
+          <Text style={styles.icon}>💡</Text>
+        </View>
+        <Typography weight={600} size={16} color="#2D3748">
+          Quick Tips
+        </Typography>
+      </View>
+      <Typography marginTop={8} size={14} color="#4A5568" align="left">
+        {displayText}
+      </Typography>
+      {shouldShowReadMore && (
+        <TouchableOpacity
+          onPress={toggleExpanded}
+          style={styles.readMoreButton}
+        >
+          <Typography size={14} color="#7A5FFF" weight={500}>
+            {isExpanded ? "Read less" : "Read more"}
+          </Typography>
+        </TouchableOpacity>
+      )}
     </View>
   );
-}
+};
 
-export default QuickTips
+export default QuickTips;
 
 const styles = StyleSheet.create({
   container: {
-    borderWidth: 1,
-        borderColor: "#DCDCDC",
-        borderRadius: 10,
-        marginTop: 10,
-        width: "90%",
-        alignSelf: "center",
-        paddingVertical: 10,
-    paddingHorizontal: 10
+    backgroundColor: "#F7FAFC",
+    borderRadius: 12,
+    marginTop: 16,
+    width: "90%",
+    alignSelf: "center",
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 4,
+  },
+  iconContainer: {
+    width: 24,
+    height: 24,
+    marginRight: 8,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  icon: {
+    fontSize: 16,
+  },
+  readMoreButton: {
+    marginTop: 8,
+    alignSelf: "flex-start",
   },
 });

@@ -2,7 +2,10 @@ import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import Typography from "./Typography";
 
-const ChatCard: React.FC<{ mode: "user" | "ai" }> = ({ mode }) => {
+const ChatCard: React.FC<{ mode: "user" | "ai"; message: string }> = ({
+  mode,
+  message
+}) => {
   return (
     <View
       style={[
@@ -15,9 +18,7 @@ const ChatCard: React.FC<{ mode: "user" | "ai" }> = ({ mode }) => {
         },
       ]}
     >
-      <Typography color="#FFFFFF">
-        Hello, how can I assist you today?
-      </Typography>
+      <Typography color="#FFFFFF">{message}</Typography>
     </View>
   );
 };
