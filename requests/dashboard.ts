@@ -52,3 +52,19 @@ export const updateTransactionCategory = async (
   );
   return response.data.data;
 };
+
+export const getTransactionsByDate = async (
+  startDate: string,
+  endDate: string
+) => {
+  const token = await getToken();
+  const response = await axiosInstance.get(
+    `/user/transaction/date?startDate=${startDate}&endDate=${endDate}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.data.data;
+};
