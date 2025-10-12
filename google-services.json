@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "571269580995",
+    "project_id": "phinmon-5bd4d",
+    "storage_bucket": "phinmon-5bd4d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:571269580995:android:09f86cc877934bc7157a76",
+        "android_client_info": {
+          "package_name": "com.sinaayo.phinmon"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGU7OOy5Rst_HOgacfN4V2Xg2V_kqC9OA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
