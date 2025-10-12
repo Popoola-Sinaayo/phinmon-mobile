@@ -131,7 +131,8 @@ const Dashboard = () => {
                 </TouchableOpacity>
               </View>
               {data?.transactions?.length > 0 ? (
-                <View style={{ flex: 1 }}>
+                <View style={{ flex: 1, width: "90%", alignSelf: "center"
+                 }}>
                   {data?.transactions?.map((t: any, index: number) => {
                     return (
                       <TransactionItem
@@ -194,7 +195,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     height: "100%",
     flexGrow: 1,
-    paddingBottom: 100,
+    // paddingBottom: 100,
     marginTop: 30,
     borderTopLeftRadius: 21,
   },

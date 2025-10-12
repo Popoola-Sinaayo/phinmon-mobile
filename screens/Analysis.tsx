@@ -5,18 +5,10 @@ import {
   View,
   TouchableOpacity,
   Modal,
+  ScrollView,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import SafeAreaContainer from "@/components/SafeAreaContainer";
-import CustomHeader from "@/components/CustomHeader";
-import {
-  LineChart,
-  BarChart,
-  PieChart,
-  ProgressChart,
-  ContributionGraph,
-  StackedBarChart,
-} from "react-native-chart-kit";
 import Typography from "@/components/Typography";
 import { Pie, PolarChart } from "victory-native";
 import DatePicker from "@/components/DatePicker";
@@ -25,50 +17,17 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { getTransactions, getTransactionsByDate } from "@/requests/dashboard";
 import { showMessage } from "react-native-flash-message";
 
-const data = [
-  {
-    name: "Seoul",
-    population: 21500000,
-    color: "rgba(131, 167, 234, 1)",
-    legendFontColor: "#7F7F7F",
-    legendFontSize: 15,
-  },
-  {
-    name: "Toronto",
-    population: 2800000,
-    color: "#F00",
-    legendFontColor: "#7F7F7F",
-    legendFontSize: 15,
-  },
-  {
-    name: "Beijing",
-    population: 527612,
-    color: "red",
-    legendFontColor: "#7F7F7F",
-    legendFontSize: 15,
-  },
-  {
-    name: "New York",
-    population: 8538000,
-    color: "#ffffff",
-    legendFontColor: "#7F7F7F",
-    legendFontSize: 15,
-  },
-  {
-    name: "Moscow",
-    population: 11920000,
-    color: "rgb(0, 0, 255)",
-    legendFontColor: "#7F7F7F",
-    legendFontSize: 15,
-  },
-];
+type VisualizerType = "pie" | "bar" | "line" | "area" | "polar";
 
 const Analysis = () => {
+  const [transactionType, setTransactionType] = useState<"credit" | "debit">("debit")
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [endDate, setEndDate] = useState<Date>(new Date());
   const [showDateFilter, setShowDateFilter] = useState(false);
   const [filteredData, setFilteredData] = useState<any[]>([]);
   const [isFiltered, setIsFiltered] = useState(false);
+  const [currentVisualizer, setCurrentVisualizer] =
+    useState<VisualizerType>("pie");
 
   const {
     data: allTransactions,
@@ -136,6 +95,22 @@ const Analysis = () => {
     useShadowColorFromDataset: false, // optional
   };
 
+  const visualizerOptions: {
+    key: VisualizerType;
+    label: string;
+    icon: string;
+  }[] = [
+    { key: "pie", label: "Pie Chart", icon: "🥧" },
+    // { key: "bar", label: "Bar Chart", icon: "📊" },
+    // { key: "line", label: "Line Chart", icon: "📈" },
+    // { key: "area", label: "Area Chart", icon: "📉" },
+    { key: "polar", label: "Polar Chart", icon: "🎯" },
+  ];
+
+  const switchVisualizer = (type: VisualizerType) => {
+    setCurrentVisualizer(type);
+  };
+
   function generateRandomColor(): string {
     // Generating a random number between 0 and 0xFFFFFF
     const randomColor = Math.floor(Math.random() * 0xffffff);
@@ -162,7 +137,7 @@ const Analysis = () => {
     miscellaneous: "#D5DBDB",
   };
 
-  const DATA = () => {
+  const DATA = useMemo(() => {
     if (!displayData || displayData.length === 0) {
       return [];
     }
@@ -170,161 +145,280 @@ const Analysis = () => {
     // Group transactions by category and count them
     const categoryCounts: { [key: string]: number } = {};
 
-    displayData.forEach((transaction: any) => {
+    displayData?.filter((t: any) => t.type === transactionType).forEach((transaction: any) => {
       const category = transaction.category || "miscellaneous";
       categoryCounts[category] = (categoryCounts[category] || 0) + 1;
     });
 
     // Convert to array format for the chart
-    return Object.entries(categoryCounts).map(([category, count]) => ({
+    return Object.entries(categoryCounts).map(([category, count], index) => ({
+      x: category.charAt(0).toUpperCase() + category.slice(1).replace("_", " "),
+      y: count,
       value: count,
       color: categoryColors[category] || generateRandomColor(),
       label:
         category.charAt(0).toUpperCase() + category.slice(1).replace("_", " "),
+      index: index,
     }));
+  }, [transactionType, displayData])
+
+  // Enhanced Pie Chart Component
+  const renderPieChart = () => {
+    const data = DATA
+    if (data.length === 0) return null;
+
+    return (
+      <View
+        style={{
+          marginTop: 20,
+          justifyContent: "center",
+          height: 300,
+          width: "100%",
+        }}
+      >
+        <PolarChart
+          data={data}
+          labelKey="label"
+          valueKey="value"
+          colorKey="color"
+        >
+          <Pie.Chart />
+        </PolarChart>
+      </View>
+    );
+  };
+
+  
+
+
+  
+  // Polar Chart Component (Enhanced)
+  const renderPolarChart = () => {
+    const data = DATA
+    if (data.length === 0) return null;
+
+    return (
+      <View
+        style={{
+          marginTop: 20,
+          justifyContent: "center",
+          height: 300,
+          width: "100%",
+        }}
+      >
+        <PolarChart
+          data={data}
+          labelKey="label"
+          valueKey="value"
+          colorKey="color"
+        >
+          <Pie.Chart innerRadius={"90%"} />
+        </PolarChart>
+      </View>
+    );
+  };
+
+  // Main Chart Renderer
+  const renderChart = () => {
+    switch (currentVisualizer) {
+      case "pie":
+        return renderPieChart();
+    
+      case "polar":
+        return renderPolarChart();
+      default:
+        return renderPieChart();
+    }
   };
 
   return (
     <SafeAreaContainer>
-      <View style={styles.topContainer}>
-        <Typography weight={600} size={24}>
-          Analysis
-        </Typography>
-        <Typography size={12} color="#8C78F2" weight={500} marginTop={4}>
-          Filter by date range to analyze specific periods
-        </Typography>
-      </View>
-
-      {/* Filter Section */}
-      <View style={styles.filterContainer}>
-        <TouchableOpacity
-          style={styles.filterButton}
-          onPress={() => setShowDateFilter(true)}
-        >
-          <Typography color="#8C78F2" weight={500} size={14}>
-            📅 Filter by Date
+      <ScrollView>
+        <View style={styles.topContainer}>
+          <Typography weight={600} size={24}>
+            Analysis
           </Typography>
-        </TouchableOpacity>
-        {isFiltered && (
-          <TouchableOpacity style={styles.clearButton} onPress={clearFilter}>
-            <Typography color="#d43d49" weight={500} size={14}>
-              Clear Filter
+          <Typography size={12} color="#8C78F2" weight={500} marginTop={4}>
+            Filter by date range to analyze specific periods
+          </Typography>
+        </View>
+
+        {/* Filter Section */}
+        <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={[styles.visualizerScrollView, {marginTop: 8, marginLeft: 4}]}
+          >
+          <TouchableOpacity
+            style={styles.filterButton}
+            onPress={() => setShowDateFilter(true)}
+          >
+            <Typography color="#8C78F2" weight={500} size={14}>
+              📅 Filter by Date
             </Typography>
           </TouchableOpacity>
-        )}
-      </View>
-
-      {/* <View style={styles.buttonContainer}>
-        <Button
-          text="Get Analysis"
-          backgroundColor="#7A5FFF"
-          paddingTop={5}
-          paddingBottom={5}
-          width={"100%"}
-        />
-      </View> */}
-      {displayData && displayData.length > 0 && DATA().length > 0 ? (
-        <>
-          <View
-            style={{
-              marginTop: 20,
-              justifyContent: "center",
-              height: 300,
-              width: "100%",
-            }}
+          {isFiltered && (
+            <TouchableOpacity style={styles.clearButton} onPress={clearFilter}>
+              <Typography color="#d43d49" weight={500} size={14}>
+                Clear Filter
+              </Typography>
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity
+            style={[
+              styles.visualizerButton,
+              transactionType === "debit" && styles.visualizerButtonActive,
+            ]}
+            onPress={() => setTransactionType("debit")}
           >
-            <PolarChart
-              data={DATA()}
-              labelKey={"label"}
-              valueKey={"value"}
-              colorKey={"color"}
+            <Typography
+              size={12}
+              weight={500}
+              color={transactionType === "debit" ? "#fff" : "#8C78F2"}
             >
-              <Pie.Chart />
-            </PolarChart>
-          </View>
-          <View style={styles.legendContainer}>
-            {DATA().map((item, index) => {
-              return (
-                <View
-                  key={item.label}
-                  style={{ flexDirection: "row", gap: 5, alignItems: "center" }}
-                >
-                  <View
-                    style={{
-                      backgroundColor: item.color,
-                      width: 10,
-                      height: 10,
-                      borderRadius: 5,
-                    }}
-                  />
-                  <Typography key={index} weight={500}>
-                    {item.label} ({item.value})
-                  </Typography>
-                </View>
-              );
-            })}
-          </View>
-        </>
-      ) : (
-        <View style={styles.noAnalysisContainer}>
-          <Typography weight={400} size={14} align="center">
-            {isFiltered
-              ? "No transactions found for selected date range"
-              : "No analysis yet — your wallet's chilling 😎"}
-          </Typography>
-        </View>
-      )}
-
-      {/* Date Filter Modal */}
-      <Modal
-        visible={showDateFilter}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={() => setShowDateFilter(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Typography weight={600} size={18} marginBottom={20}>
-              Filter by Date Range
+              Expenses
             </Typography>
+          </TouchableOpacity>
 
-            <DatePicker
-              label="Start Date"
-              value={startDate}
-              onChange={setStartDate}
-            />
+          <TouchableOpacity
+            style={[
+              styles.visualizerButton,
+              transactionType === "credit" && styles.visualizerButtonActive,
+            ]}
+            onPress={() => setTransactionType("credit")}
+          >
+            <Typography
+              size={12}
+              weight={500}
+              color={transactionType === "credit" ? "#fff" : "#8C78F2"}
+            >
+              Income
+            </Typography>
+          </TouchableOpacity>
+        </ScrollView>
 
-            <DatePicker
-              label="End Date"
-              value={endDate}
-              onChange={setEndDate}
-            />
-
-            <View style={styles.modalButtons}>
+        {/* Visualizer Switcher */}
+        <View style={styles.visualizerContainer}>
+          <Typography weight={500} size={16} marginBottom={10}>
+            Choose Visualization:
+          </Typography>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.visualizerScrollView}
+          >
+            {visualizerOptions.map((option) => (
               <TouchableOpacity
-                style={styles.cancelModalButton}
-                onPress={() => setShowDateFilter(false)}
+                key={option.key}
+                style={[
+                  styles.visualizerButton,
+                  currentVisualizer === option.key &&
+                    styles.visualizerButtonActive,
+                ]}
+                onPress={() => switchVisualizer(option.key)}
               >
-                <Typography color="#666" weight={500}>
-                  Cancel
+                <Typography
+                  size={12}
+                  weight={500}
+                  color={currentVisualizer === option.key ? "#fff" : "#8C78F2"}
+                >
+                  {option.icon} {option.label}
                 </Typography>
               </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+        {displayData && displayData.length > 0 && DATA.length > 0 ? (
+          <>
+            <View style={styles.chartContainer}>{renderChart()}</View>
+            <View style={styles.legendContainer}>
+              {DATA.map((item, index) => {
+                return (
+                  <View
+                    key={item.label}
+                    style={{
+                      flexDirection: "row",
+                      gap: 5,
+                      alignItems: "center",
+                    }}
+                  >
+                    <View
+                      style={{
+                        backgroundColor: item.color,
+                        width: 10,
+                        height: 10,
+                        borderRadius: 5,
+                      }}
+                    />
+                    <Typography key={index} weight={500}>
+                      {item.label} ({item.value})
+                    </Typography>
+                  </View>
+                );
+              })}
+            </View>
+          </>
+        ) : (
+          <View style={styles.noAnalysisContainer}>
+            <Typography weight={400} size={14} align="center">
+              {isFiltered
+                ? "No transactions found for selected date range"
+                : "No analysis yet — your wallet's chilling 😎"}
+            </Typography>
+          </View>
+        )}
 
-              <TouchableOpacity
-                style={styles.applyButton}
-                onPress={handleFilterByDate}
-                disabled={filterByDateMutation.isPending}
-              >
-                <Typography color="#fff" weight={500}>
-                  {filterByDateMutation.isPending
-                    ? "Filtering..."
-                    : "Apply Filter"}
-                </Typography>
-              </TouchableOpacity>
+        {/* Date Filter Modal */}
+        <Modal
+          visible={showDateFilter}
+          transparent={true}
+          animationType="slide"
+          onRequestClose={() => setShowDateFilter(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <Typography weight={600} size={18} marginBottom={20}>
+                Filter by Date Range
+              </Typography>
+
+              <DatePicker
+                label="Start Date"
+                value={startDate}
+                onChange={setStartDate}
+              />
+
+              <DatePicker
+                label="End Date"
+                value={endDate}
+                onChange={setEndDate}
+              />
+
+              <View style={styles.modalButtons}>
+                <TouchableOpacity
+                  style={styles.cancelModalButton}
+                  onPress={() => setShowDateFilter(false)}
+                >
+                  <Typography color="#666" weight={500}>
+                    Cancel
+                  </Typography>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.applyButton}
+                  onPress={handleFilterByDate}
+                  disabled={filterByDateMutation.isPending}
+                >
+                  <Typography color="#fff" weight={500}>
+                    {filterByDateMutation.isPending
+                      ? "Filtering..."
+                      : "Apply Filter"}
+                  </Typography>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
-      </Modal>
+        </Modal>
+      </ScrollView>
     </SafeAreaContainer>
   );
 };
@@ -358,6 +452,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1,
     borderColor: "#8C78F2",
+    marginHorizontal: 8
   },
   clearButton: {
     backgroundColor: "#FFE6E6",
@@ -416,5 +511,95 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 8,
     alignItems: "center",
+  },
+  visualizerContainer: {
+    width: "90%",
+    alignSelf: "center",
+    // marginTop: 20,
+    marginBottom: 10,
+  },
+  visualizerScrollView: {
+    flexDirection: "row",
+  },
+  visualizerButton: {
+    backgroundColor: "#F0EDFF",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#8C78F2",
+    marginRight: 8,
+    minWidth: 100,
+    alignItems: "center",
+  },
+  visualizerButtonActive: {
+    backgroundColor: "#8C78F2",
+    borderColor: "#8C78F2",
+  },
+  chartContainer: {
+    marginTop: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    height: 320,
+    width: "100%",
+  },
+  simpleChartContainer: {
+    marginTop: 20,
+    padding: 20,
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    marginHorizontal: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  barItem: {
+    marginBottom: 12,
+  },
+  barLabel: {
+    marginBottom: 4,
+  },
+  barContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  bar: {
+    height: 20,
+    borderRadius: 10,
+    minWidth: 4,
+  },
+  lineChartContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+  },
+  lineItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 8,
+    width: "48%",
+  },
+  lineDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+  },
+  areaChartContainer: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    justifyContent: "space-around",
+    height: 120,
+    paddingHorizontal: 10,
+  },
+  areaItem: {
+    alignItems: "center",
+    flex: 1,
+  },
+  areaBar: {
+    width: 20,
+    borderRadius: 4,
+    marginBottom: 4,
   },
 });
