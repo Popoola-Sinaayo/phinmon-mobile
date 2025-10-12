@@ -8,6 +8,13 @@ node_modules/
 dist/
 web-build/
 expo-env.d.ts
+*.json
+*.plist
+*.pbxproj
+*.xcworkspace
+*.xcuserdata
+*.xcuserstate
+*.xcscheme
 
 # Native
 .kotlin/

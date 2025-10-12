@@ -36,6 +36,6 @@
         "projectId": "2f796c6d-970f-49b5-9125-b8ae658de178"
       }
     },
-    "plugins": ["expo-asset"]
+    "plugins": ["expo-asset", "expo-notifications"]
   }
 }
