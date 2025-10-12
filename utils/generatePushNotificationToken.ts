@@ -26,14 +26,15 @@ async function registerForPushNotificationsAsync() {
     //   handleRegistrationError(
     //     "Permission not granted to get push token for push notification!"
         //   );
-        console.log("Permission not granted to get push token for push notification!");
+        console.warn("Permission not granted to get push token for push notification!");
       return;
     }
     const projectId =
       Constants?.expoConfig?.extra?.eas?.projectId ??
       Constants?.easConfig?.projectId;
     if (!projectId) {
-      handleRegistrationError("Project ID not found");
+    //   handleRegistrationError("Project ID not found");
+        console.warn("Project ID not found");
     }
     try {
       const pushTokenString = (
@@ -44,9 +45,11 @@ async function registerForPushNotificationsAsync() {
       console.log(pushTokenString);
       return pushTokenString;
     } catch (e: unknown) {
-      handleRegistrationError(`${e}`);
+    //   handleRegistrationError(`${e}`);
+        console.warn(`${e}`);
     }
   } else {
-    handleRegistrationError("Must use physical device for push notifications");
+    // handleRegistrationError("Must use physical device for push notifications");
+        console.warn("Must use physical device for push notifications");
   }
 }
