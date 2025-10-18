@@ -32,7 +32,7 @@ const QuickTips: React.FC<{ description: string }> = ({ description }) => {
           Quick Tips
         </Typography>
       </View>
-      <ScrollView>
+      {/* <ScrollView> */}
         <Typography marginTop={8} size={14} color="#4A5568" align="left">
           {displayText}
         </Typography>
@@ -46,7 +46,7 @@ const QuickTips: React.FC<{ description: string }> = ({ description }) => {
             </Typography>
           </TouchableOpacity>
         )}
-      </ScrollView>
+      {/* </ScrollView> */}
     </View>
   );
 };
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 2,
     elevation: 1,
-    maxHeight: 200,
+    // maxHeight: 200,
   },
   header: {
     flexDirection: "row",

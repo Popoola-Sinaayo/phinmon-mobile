@@ -61,6 +61,9 @@ const Dashboard = () => {
 
   const updatePushTokenMutation = useMutation({
     mutationFn: updatePushToken,
+    onSuccess: (data) => {
+      // console.log("Push token updated:", data);
+    },
     onError: (error) => {
       console.error("Bank connection error:", error);
       showMessage({
@@ -71,9 +74,10 @@ const Dashboard = () => {
   });
 
   useEffect(() => {
+    console.log("Registering token");
     const registerToken = async () => {
       const token = await registerForPushNotificationsAsync();
-      console.log("Token registered:", token);
+      // console.log("Token registered:", token);
       updatePushTokenMutation.mutate(token as string);
     };
     registerToken();
@@ -129,7 +133,7 @@ const Dashboard = () => {
                     // flexDirection: "row",
                     // alignItems: "center",
                     // gap: 3,
-                    width: "65%",
+                    // width: "65%",
                   }}
                 >
                   <Typography color="#FFFFFF" size={12}>

@@ -16,11 +16,14 @@ import Button from "@/components/Button";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { getTransactions, getTransactionsByDate } from "@/requests/dashboard";
 import { showMessage } from "react-native-flash-message";
+import { formatCurrency } from "@/utils/currencyFormatter";
 
 type VisualizerType = "pie" | "bar" | "line" | "area" | "polar";
 
 const Analysis = () => {
-  const [transactionType, setTransactionType] = useState<"credit" | "debit">("debit")
+  const [transactionType, setTransactionType] = useState<"credit" | "debit">(
+    "debit"
+  );
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [endDate, setEndDate] = useState<Date>(new Date());
   const [showDateFilter, setShowDateFilter] = useState(false);
@@ -142,29 +145,40 @@ const Analysis = () => {
       return [];
     }
 
-    // Group transactions by category and count them
-    const categoryCounts: { [key: string]: number } = {};
+    // Group transactions by category and sum their amounts
+    const categoryAmounts: {
+      [key: string]: { total: number; currencyCode: string };
+    } = {};
 
-    displayData?.filter((t: any) => t.type === transactionType).forEach((transaction: any) => {
-      const category = transaction.category || "miscellaneous";
-      categoryCounts[category] = (categoryCounts[category] || 0) + 1;
-    });
+    displayData
+      ?.filter((t: any) => t.type === transactionType)
+      .forEach((transaction: any) => {
+        const category = transaction.category || "miscellaneous";
+        const amount = parseFloat(transaction.amount || "0");
+        const currencyCode = transaction.currency || "USD";
+
+        if (!categoryAmounts[category]) {
+          categoryAmounts[category] = { total: 0, currencyCode };
+        }
+        categoryAmounts[category].total += amount;
+      });
 
     // Convert to array format for the chart
-    return Object.entries(categoryCounts).map(([category, count], index) => ({
+    return Object.entries(categoryAmounts).map(([category, data], index) => ({
       x: category.charAt(0).toUpperCase() + category.slice(1).replace("_", " "),
-      y: count,
-      value: count,
+      y: data.total,
+      value: data.total,
+      currencyCode: data.currencyCode,
       color: categoryColors[category] || generateRandomColor(),
       label:
         category.charAt(0).toUpperCase() + category.slice(1).replace("_", " "),
       index: index,
     }));
-  }, [transactionType, displayData])
+  }, [transactionType, displayData]);
 
   // Enhanced Pie Chart Component
   const renderPieChart = () => {
-    const data = DATA
+    const data = DATA;
     if (data.length === 0) return null;
 
     return (
@@ -188,13 +202,9 @@ const Analysis = () => {
     );
   };
 
-  
-
-
-  
   // Polar Chart Component (Enhanced)
   const renderPolarChart = () => {
-    const data = DATA
+    const data = DATA;
     if (data.length === 0) return null;
 
     return (
@@ -223,7 +233,7 @@ const Analysis = () => {
     switch (currentVisualizer) {
       case "pie":
         return renderPieChart();
-    
+
       case "polar":
         return renderPolarChart();
       default:
@@ -245,10 +255,10 @@ const Analysis = () => {
 
         {/* Filter Section */}
         <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={[styles.visualizerScrollView, {marginTop: 8, marginLeft: 4}]}
-          >
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={[styles.visualizerScrollView, { marginTop: 8, marginLeft: 4 }]}
+        >
           <TouchableOpacity
             style={styles.filterButton}
             onPress={() => setShowDateFilter(true)}
@@ -332,30 +342,67 @@ const Analysis = () => {
           <>
             <View style={styles.chartContainer}>{renderChart()}</View>
             <View style={styles.legendContainer}>
-              {DATA.map((item, index) => {
-                return (
-                  <View
-                    key={item.label}
-                    style={{
-                      flexDirection: "row",
-                      gap: 5,
-                      alignItems: "center",
-                    }}
-                  >
-                    <View
-                      style={{
-                        backgroundColor: item.color,
-                        width: 10,
-                        height: 10,
-                        borderRadius: 5,
-                      }}
-                    />
-                    <Typography key={index} weight={500}>
-                      {item.label} ({item.value})
-                    </Typography>
-                  </View>
-                );
-              })}
+              <Typography
+                weight={600}
+                size={18}
+                marginBottom={20}
+                align="center"
+                color="#2D3748"
+              >
+                Category Breakdown
+              </Typography>
+              <View style={styles.legendList}>
+                {DATA.sort((a, b) => b.value - a.value).map((item, index) => {
+                  const percentage =
+                    (item.value / DATA.reduce((sum, d) => sum + d.value, 0)) *
+                    100;
+                  return (
+                    <View key={item.label} style={styles.legendItem}>
+                      <View style={styles.legendItemLeft}>
+                        <View
+                          style={[
+                            styles.legendColorIndicator,
+                            { backgroundColor: item.color },
+                          ]}
+                        />
+                        <View style={styles.legendItemInfo}>
+                          <Typography weight={600} size={15} color="#2D3748">
+                            {item.label}
+                          </Typography>
+                          <Typography weight={500} size={12} color="#718096">
+                            {percentage.toFixed(1)}% of total
+                          </Typography>
+                        </View>
+                      </View>
+                      <View style={styles.legendItemRight}>
+                        <Typography
+                          weight={700}
+                          size={16}
+                          color="#1A202C"
+                          align="right"
+                        >
+                          {formatCurrency(item.value, {
+                            currencyCode: item.currencyCode,
+                          })}
+                        </Typography>
+                        <View
+                          style={[styles.legendProgressBar, { width: "100%" }]}
+                        >
+                          <View
+                            style={[
+                              styles.legendProgressFill,
+                              {
+                                width: `${Math.min(percentage, 100)}%`,
+                                backgroundColor: item.color,
+                              },
+                            ]}
+                          />
+                        </View>
+                      </View>
+                    </View>
+                  );
+                })}
+              </View>
             </View>
           </>
         ) : (
@@ -452,7 +499,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1,
     borderColor: "#8C78F2",
-    marginHorizontal: 8
+    marginHorizontal: 8,
   },
   clearButton: {
     backgroundColor: "#FFE6E6",
@@ -468,11 +515,73 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   legendContainer: {
+    width: "90%",
+    alignSelf: "center",
+    marginTop: 24,
+    marginBottom: 20,
+    backgroundColor: "#F8FAFC",
+    borderRadius: 16,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+  },
+  legendList: {
+    gap: 16,
+  },
+  legendItem: {
     flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    gap: 20,
-    marginTop: 20,
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    padding: 16,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: "#F1F5F9",
+  },
+  legendItemLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+    gap: 12,
+  },
+  legendItemInfo: {
+    flex: 1,
+  },
+  legendItemRight: {
+    alignItems: "flex-end",
+    minWidth: 100,
+  },
+  legendColorIndicator: {
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  legendProgressBar: {
+    height: 4,
+    backgroundColor: "#E2E8F0",
+    borderRadius: 2,
+    marginTop: 6,
+    overflow: "hidden",
+  },
+  legendProgressFill: {
+    height: "100%",
+    borderRadius: 2,
   },
   noAnalysisContainer: {
     flex: 1,
