@@ -8,8 +8,8 @@ node_modules/
 dist/
 web-build/
 expo-env.d.ts
-*.json
-*.plist
+# google-services.json
+# *.plist
 *.pbxproj
 *.xcworkspace
 *.xcuserdata

@@ -5,16 +5,18 @@ import {
   ScrollView,
   RefreshControl,
 } from "react-native";
-import React, { useLayoutEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import SafeAreaContainer from "@/components/SafeAreaContainer";
 import Typography from "@/components/Typography";
 import QuickTips from "@/components/QuickTips";
 import { getLocalName } from "@/utils/storage";
-import { useQuery } from "@tanstack/react-query";
-import { getUserSpendingClass, syncTransactions } from "@/requests/dashboard";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { getUserSpendingClass, syncTransactions, updatePushToken } from "@/requests/dashboard";
 import TransactionItem from "@/components/TransactionItem";
 import DashboardSkeleton from "@/components/DashboardSkeleton";
 import { useNavigation } from "@react-navigation/native";
+import registerForPushNotificationsAsync from "@/utils/generatePushNotificationToken";
+import { showMessage } from "react-native-flash-message";
 
 const Dashboard = () => {
   const [name, setName] = useState("");
@@ -56,6 +58,26 @@ const Dashboard = () => {
       setRefreshing(false);
     }
   };
+
+  const updatePushTokenMutation = useMutation({
+    mutationFn: updatePushToken,
+    onError: (error) => {
+      console.error("Bank connection error:", error);
+      showMessage({
+        message: "Error updating push token",
+        type: "danger",
+      });
+    },
+  });
+
+  useEffect(() => {
+    const registerToken = async () => {
+      const token = await registerForPushNotificationsAsync();
+      console.log("Token registered:", token);
+      updatePushTokenMutation.mutate(token as string);
+    };
+    registerToken();
+  }, [])
 
   return (
     <SafeAreaContainer>

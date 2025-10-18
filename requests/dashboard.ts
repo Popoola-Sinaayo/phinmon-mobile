@@ -68,3 +68,22 @@ export const getTransactionsByDate = async (
   );
   return response.data.data;
 };
+
+
+export const updatePushToken = async (
+ pushToken: string
+) => {
+  const token = await getToken();
+  const response = await axiosInstance.post(
+    "/user/push/token",
+    {
+      pushToken
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.data.data;
+};

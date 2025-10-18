@@ -4,7 +4,7 @@ import { Platform } from "react-native";
 import Device from "expo-device";
 import Constants from "expo-constants";
 
-async function registerForPushNotificationsAsync() {
+export default async function registerForPushNotificationsAsync() {
   if (Platform.OS === "android") {
     await Notifications.setNotificationChannelAsync("default", {
       name: "default",
