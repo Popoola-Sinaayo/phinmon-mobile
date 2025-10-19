@@ -10,6 +10,7 @@ import {
 import Typography from './Typography';
 import getCategoryElement from '@/utils/getCategoryElement';
 import capitalizeFirstWord from '@/utils/capitalizeFirstWord';
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface CategoryPickerModalProps {
   visible: boolean;
@@ -42,6 +43,8 @@ const CategoryPickerModal: React.FC<CategoryPickerModalProps> = ({
   onSelectCategory,
   currentCategory,
 }) => {
+  const { theme } = useTheme();
+  
   const handleCategorySelect = (category: string) => {
     onSelectCategory(category);
     onClose();
@@ -55,29 +58,35 @@ const CategoryPickerModal: React.FC<CategoryPickerModalProps> = ({
       onRequestClose={onClose}
     >
       <View style={styles.overlay}>
-        <View style={styles.modalContainer}>
-          <View style={styles.header}>
-            <Typography weight={600} size={18}>
+        <View
+          style={[styles.modalContainer, { backgroundColor: theme.surface }]}
+        >
+          <View style={[styles.header, { borderBottomColor: theme.border }]}>
+            <Typography weight={600} size={18} variant="heading">
               Select Category
             </Typography>
             <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-              <Typography color="#8C78F2" weight={500}>
+              <Typography color={theme.primary} weight={500}>
                 Cancel
               </Typography>
             </TouchableOpacity>
           </View>
 
-          <ScrollView style={styles.categoriesList} showsVerticalScrollIndicator={false}>
+          <ScrollView
+            style={styles.categoriesList}
+            showsVerticalScrollIndicator={false}
+          >
             {categories.map((category) => {
               const details = getCategoryElement(category);
               const isSelected = category === currentCategory;
-              
+
               return (
                 <TouchableOpacity
                   key={category}
                   style={[
                     styles.categoryItem,
-                    isSelected && styles.selectedCategoryItem,
+                    { borderBottomColor: theme.border },
+                    isSelected && { backgroundColor: theme.primary + "20" },
                   ]}
                   onPress={() => handleCategorySelect(category)}
                 >
@@ -93,7 +102,7 @@ const CategoryPickerModal: React.FC<CategoryPickerModalProps> = ({
                     <Typography
                       weight={isSelected ? 600 : 500}
                       size={16}
-                      color={isSelected ? "#8C78F2" : "#414141"}
+                      color={isSelected ? theme.primary : theme.text}
                     >
                       {category === "others"
                         ? "Miscellaneous"
@@ -101,8 +110,13 @@ const CategoryPickerModal: React.FC<CategoryPickerModalProps> = ({
                     </Typography>
                   </View>
                   {isSelected && (
-                    <View style={styles.selectedIndicator}>
-                      <Typography color="#8C78F2" weight={600}>
+                    <View
+                      style={[
+                        styles.selectedIndicator,
+                        { backgroundColor: theme.primary + "30" },
+                      ]}
+                    >
+                      <Typography color={theme.primary} weight={600}>
                         ✓
                       </Typography>
                     </View>
@@ -120,24 +134,22 @@ const CategoryPickerModal: React.FC<CategoryPickerModalProps> = ({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "flex-end",
   },
   modalContainer: {
-    backgroundColor: '#fff',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    maxHeight: '70%',
+    maxHeight: "70%",
     paddingBottom: 20,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
   },
   closeButton: {
     paddingVertical: 4,
@@ -147,36 +159,31 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   categoryItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
-  },
-  selectedCategoryItem: {
-    backgroundColor: '#F8F7FF',
   },
   categoryLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     flex: 1,
   },
   categoryIcon: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginRight: 12,
   },
   selectedIndicator: {
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: '#F0EDFF',
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 

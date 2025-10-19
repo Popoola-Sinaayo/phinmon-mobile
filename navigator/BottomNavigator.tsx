@@ -13,28 +13,29 @@ import Analysis from "@/screens/Analysis";
 import BottomNavigatorAnalyze from "@/assets/svg/BottomNavigatorAnalyze";
 import Settings from "@/screens/Settings";
 import BottomNavigationSettings from "@/assets/svg/BottomNavigationSettings";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 
 const BottomNavigator = () => {
   const insets = useSafeAreaInsets();
+  const { theme } = useTheme();
+
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
         tabBarLabelPosition: "below-icon",
-        // tabBarStyle: {
-        //   //   backgroundColor: "red",
-        //   //   backgroundColor: "#D6D6D67D",
-        //   borderRadius: 30,
-        //   height: 60,
-        //   bottom: insets.bottom,
-        //   width: "90%",
-        //   paddingBottom: 0,
-
-        //   alignSelf: "center",
-        //   paddingTop: 4,
-        // },
+        tabBarStyle: {
+          backgroundColor: theme.surface,
+          borderTopColor: theme.border,
+          borderTopWidth: 1,
+          height: 60 + insets.bottom,
+          paddingBottom: insets.bottom,
+          paddingTop: 8,
+        },
+        tabBarActiveTintColor: theme.primary,
+        tabBarInactiveTintColor: theme.textTertiary,
       }}
     >
       <Tab.Screen
@@ -43,11 +44,13 @@ const BottomNavigator = () => {
         options={{
           tabBarIcon: (focused) => (
             <HomeBottomNavigator
-              color={focused.focused ? "#8C78F2" : "#818181"}
+              color={focused.focused ? theme.primary : theme.textTertiary}
             />
           ),
           tabBarLabel: (focused) => (
-            <Typography color={focused.focused ? "#8C78F2" : "#818181"}>
+            <Typography
+              color={focused.focused ? theme.primary : theme.textTertiary}
+            >
               Home
             </Typography>
           ),
@@ -59,11 +62,13 @@ const BottomNavigator = () => {
         options={{
           tabBarIcon: (focused) => (
             <BottomNavigatorChat
-              color={focused.focused ? "#8C78F2" : "#818181"}
+              color={focused.focused ? theme.primary : theme.textTertiary}
             />
           ),
           tabBarLabel: (focused) => (
-            <Typography color={focused.focused ? "#8C78F2" : "#818181"}>
+            <Typography
+              color={focused.focused ? theme.primary : theme.textTertiary}
+            >
               Chat AI
             </Typography>
           ),
@@ -75,11 +80,13 @@ const BottomNavigator = () => {
         options={{
           tabBarIcon: (focused) => (
             <BottomNavigatorHistory
-              color={focused.focused ? "#8C78F2" : "#818181"}
+              color={focused.focused ? theme.primary : theme.textTertiary}
             />
           ),
           tabBarLabel: (focused) => (
-            <Typography color={focused.focused ? "#8C78F2" : "#818181"}>
+            <Typography
+              color={focused.focused ? theme.primary : theme.textTertiary}
+            >
               History
             </Typography>
           ),
@@ -91,12 +98,14 @@ const BottomNavigator = () => {
         options={{
           tabBarIcon: (focused) => (
             <BottomNavigatorAnalyze
-              color={focused.focused ? "#8C78F2" : "#818181"}
+              color={focused.focused ? theme.primary : theme.textTertiary}
             />
           ),
           tabBarLabel: (focused) => {
             return (
-              <Typography color={focused.focused ? "#8C78F2" : "#818181"}>
+              <Typography
+                color={focused.focused ? theme.primary : theme.textTertiary}
+              >
                 Analysis
               </Typography>
             );
@@ -109,12 +118,14 @@ const BottomNavigator = () => {
         options={{
           tabBarIcon: (focused) => (
             <BottomNavigationSettings
-              color={focused.focused ? "#8C78F2" : "#818181"}
+              color={focused.focused ? theme.primary : theme.textTertiary}
             />
           ),
           tabBarLabel: (focused) => {
             return (
-              <Typography color={focused.focused ? "#8C78F2" : "#818181"}>
+              <Typography
+                color={focused.focused ? theme.primary : theme.textTertiary}
+              >
                 Settings
               </Typography>
             );

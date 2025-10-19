@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { View, StyleSheet, Animated } from "react-native";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface SkeletonBoxProps {
   width: string | number | any;
@@ -21,6 +22,7 @@ const SkeletonBox: React.FC<SkeletonBoxProps> = ({
   marginRight = 0,
 }) => {
   const shimmer = useRef(new Animated.Value(0)).current;
+  const { theme } = useTheme();
 
   useEffect(() => {
     const shimmerAnimation = Animated.loop(
@@ -59,6 +61,7 @@ const SkeletonBox: React.FC<SkeletonBoxProps> = ({
           marginBottom,
           marginLeft,
           marginRight,
+          backgroundColor: theme.backgroundSecondary,
         },
       ]}
     >
@@ -67,6 +70,7 @@ const SkeletonBox: React.FC<SkeletonBoxProps> = ({
           styles.shimmer,
           {
             opacity,
+            backgroundColor: theme.surface,
           },
         ]}
       />
@@ -75,8 +79,10 @@ const SkeletonBox: React.FC<SkeletonBoxProps> = ({
 };
 
 export default function TransactionHistorySkeleton() {
+  const { theme } = useTheme();
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Header skeleton */}
       <View style={styles.headerContainer}>
         <SkeletonBox width="60%" height={24} />
@@ -85,7 +91,13 @@ export default function TransactionHistorySkeleton() {
       {/* Transaction items skeleton */}
       <View style={styles.transactionsContainer}>
         {[1, 2, 3, 4, 5, 6, 7, 8].map((item) => (
-          <View key={item} style={styles.transactionItem}>
+          <View
+            key={item}
+            style={[
+              styles.transactionItem,
+              { borderBottomColor: theme.border },
+            ]}
+          >
             <View style={styles.transactionLeft}>
               <SkeletonBox
                 width={40}
@@ -112,7 +124,6 @@ export default function TransactionHistorySkeleton() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f7f7f7",
   },
   headerContainer: {
     width: "90%",
@@ -131,7 +142,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#E0E0E0",
   },
   transactionLeft: {
     flexDirection: "row",
@@ -145,7 +155,6 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   skeletonBox: {
-    backgroundColor: "#E0E0E0",
     overflow: "hidden",
     position: "relative",
   },
@@ -155,6 +164,5 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "rgba(255, 255, 255, 0.6)",
   },
 });

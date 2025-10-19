@@ -17,11 +17,13 @@ import DashboardSkeleton from "@/components/DashboardSkeleton";
 import { useNavigation } from "@react-navigation/native";
 import registerForPushNotificationsAsync from "@/utils/generatePushNotificationToken";
 import { showMessage } from "react-native-flash-message";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const Dashboard = () => {
   const [name, setName] = useState("");
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
+  const { theme } = useTheme();
   useLayoutEffect(() => {
     const getUserName = async () => {
       const name = await getLocalName();
@@ -81,26 +83,31 @@ const Dashboard = () => {
       updatePushTokenMutation.mutate(token as string);
     };
     registerToken();
-  }, [])
+  }, []);
 
   return (
     <SafeAreaContainer>
       <ScrollView
-        style={{ flex: 1 }}
+        style={{ flex: 1, backgroundColor: theme.background }}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            colors={["#8C78F2"]}
-            tintColor="#8C78F2"
+            colors={[theme.primary]}
+            tintColor={theme.primary}
           />
         }
       >
         <View style={{ width: "90%", alignSelf: "center", marginTop: 20 }}>
-          <Typography weight={500} size={24}>
+          <Typography weight={500} size={24} variant="heading">
             Welcome {name}
           </Typography>
-          <Typography weight={400} size={12} color="#8C78F2" marginTop={4}>
+          <Typography
+            weight={400}
+            size={12}
+            color={theme.primary}
+            marginTop={4}
+          >
             Pull down to refresh your data
           </Typography>
         </View>
@@ -129,12 +136,14 @@ const Dashboard = () => {
                   {data?.class?.type}
                 </Typography>
                 <View
-                  style={{
-                    // flexDirection: "row",
-                    // alignItems: "center",
-                    // gap: 3,
-                    // width: "65%",
-                  }}
+                  style={
+                    {
+                      // flexDirection: "row",
+                      // alignItems: "center",
+                      // gap: 3,
+                      // width: "65%",
+                    }
+                  }
                 >
                   <Typography color="#FFFFFF" size={12}>
                     {data?.class?.desc}
@@ -143,7 +152,12 @@ const Dashboard = () => {
               </View>
             </View>
             <QuickTips description={data?.advice} />
-            <View style={styles.historyContainer}>
+            <View
+              style={[
+                styles.historyContainer,
+                { backgroundColor: theme.background },
+              ]}
+            >
               <View style={styles.historyItemHeader}>
                 <Typography weight={600}>History</Typography>
                 <TouchableOpacity
@@ -157,8 +171,7 @@ const Dashboard = () => {
                 </TouchableOpacity>
               </View>
               {data?.transactions?.length > 0 ? (
-                <View style={{ flex: 1, width: "90%", alignSelf: "center"
-                 }}>
+                <View style={{ flex: 1, width: "90%", alignSelf: "center" }}>
                   {data?.transactions?.map((t: any, index: number) => {
                     return (
                       <TransactionItem
@@ -192,7 +205,7 @@ export default Dashboard;
 
 const styles = StyleSheet.create({
   topContainer: {
-    backgroundColor: "#8C78F2",
+    backgroundColor: "#8C78F2", // Keep primary color for the card
     borderRadius: 21,
     width: "90%",
     alignSelf: "center",
@@ -218,10 +231,8 @@ const styles = StyleSheet.create({
     borderRadius: 21,
   },
   historyContainer: {
-    backgroundColor: "#ffffff",
     height: "100%",
     flexGrow: 1,
-    // paddingBottom: 100,
     marginTop: 30,
     borderTopLeftRadius: 21,
   },
@@ -235,7 +246,6 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   noTransactionsContainer: {
-    // flex: 1,
     height: "50%",
     justifyContent: "center",
     alignItems: "center",

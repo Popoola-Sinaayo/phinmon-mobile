@@ -1,14 +1,18 @@
 import * as React from "react";
 import Svg, { Path } from "react-native-svg";
 
-function HashIcon() {
+interface HashIconProps {
+  color?: string;
+}
+
+function HashIcon({ color = "#000000" }: HashIconProps) {
   return (
     <Svg
       width={24}
       height={24}
       viewBox="0 0 24 24"
       fill="none"
-      stroke="#000000"
+      stroke={color}
       strokeWidth={2}
       strokeLinecap="round"
       strokeLinejoin="round"

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { View, StyleSheet, Animated } from "react-native";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface SkeletonBoxProps {
   width: string | number | any;
@@ -21,6 +22,7 @@ const SkeletonBox: React.FC<SkeletonBoxProps> = ({
   marginRight = 0,
 }) => {
   const shimmer = useRef(new Animated.Value(0)).current;
+  const { theme } = useTheme();
 
   useEffect(() => {
     const shimmerAnimation = Animated.loop(
@@ -59,6 +61,7 @@ const SkeletonBox: React.FC<SkeletonBoxProps> = ({
           marginBottom,
           marginLeft,
           marginRight,
+          backgroundColor: theme.backgroundSecondary,
         },
       ]}
     >
@@ -67,6 +70,7 @@ const SkeletonBox: React.FC<SkeletonBoxProps> = ({
           styles.shimmer,
           {
             opacity,
+            backgroundColor: theme.surface,
           },
         ]}
       />
@@ -75,10 +79,12 @@ const SkeletonBox: React.FC<SkeletonBoxProps> = ({
 };
 
 export default function DashboardSkeleton() {
+  const { theme } = useTheme();
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Main card skeleton */}
-      <View style={styles.mainCard}>
+      <View style={[styles.mainCard, { backgroundColor: theme.primary }]}>
         {/* Header text skeleton */}
         <SkeletonBox width="40%" height={12} marginBottom={8} />
 
@@ -114,12 +120,20 @@ export default function DashboardSkeleton() {
       </View>
 
       {/* Transaction history skeleton */}
-      <View style={styles.historyContainer}>
+      <View
+        style={[styles.historyContainer, { backgroundColor: theme.surface }]}
+      >
         <SkeletonBox width="40%" height={18} marginBottom={16} />
 
         {/* Transaction items skeleton */}
         {[1, 2, 3, 4].map((item) => (
-          <View key={item} style={styles.transactionItem}>
+          <View
+            key={item}
+            style={[
+              styles.transactionItem,
+              { borderBottomColor: theme.border },
+            ]}
+          >
             <View style={styles.transactionLeft}>
               <SkeletonBox
                 width={40}
@@ -143,12 +157,10 @@ export default function DashboardSkeleton() {
 const styles = StyleSheet.create({
   container: {
     // flex: 1,
-    backgroundColor: "#F6F3FA",
     // backgroundColor: "red",
     // height: 200,
   },
   mainCard: {
-    backgroundColor: "#8C78F2",
     width: "90%",
     alignSelf: "center",
     paddingTop: 15,
@@ -177,7 +189,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   historyContainer: {
-    backgroundColor: "#ffffff",
     flexGrow: 1,
     paddingTop: 20,
     paddingHorizontal: 20,
@@ -190,7 +201,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0",
   },
   transactionLeft: {
     flexDirection: "row",
@@ -201,7 +211,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   skeletonBox: {
-    backgroundColor: "#E0E0E0",
     overflow: "hidden",
     position: "relative",
   },
@@ -211,6 +220,5 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "rgba(255, 255, 255, 0.6)",
   },
 });

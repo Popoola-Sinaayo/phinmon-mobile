@@ -27,6 +27,7 @@ import {
 } from "@/requests/authentication";
 import { showMessage } from "react-native-flash-message";
 import { useUserData } from "@/hooks/useUserData";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface ConnectedAccount {
   id: string;
@@ -37,10 +38,11 @@ const ConnectedAccountsContent = () => {
   const { data: userData, isLoading, error } = useUserData();
   const [institutionSelected, setInstitutionSelected] = useState("");
   const { init, reauthorise } = useMonoConnect();
+  const { theme } = useTheme();
   console.log(userData, "userData");
   console.log(isLoading, "isLoading");
   console.log(error, "error");
-   const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
   // Get monoAccount data from userData
   const monoAccounts: ConnectedAccount[] = userData?.monoAccount || [];
 
@@ -140,30 +142,33 @@ const ConnectedAccountsContent = () => {
   };
 
   const renderAccountCard = (account: ConnectedAccount, index: number) => (
-    <View key={`${account.id}-${index}`} style={styles.accountCard}>
+    <View
+      key={`${account.id}-${index}`}
+      style={[
+        styles.accountCard,
+        { backgroundColor: theme.surface, borderColor: theme.border },
+      ]}
+    >
       <View style={styles.accountHeader}>
         <View style={styles.bankIconContainer}>
-          <CreditCardIcon />
+          <CreditCardIcon color={theme.text} />
         </View>
         <View style={styles.accountInfo}>
-          <Typography weight={600} size={16} color="#212121">
+          <Typography weight={600} size={16} variant="body">
             {account.institution || "N/A"}
           </Typography>
-          {/* <Typography weight={400} size={12} color="#666" marginTop={2}>
-            Account Type: {account.id}
-          </Typography> */}
         </View>
         <TouchableOpacity
           style={styles.disconnectButton}
           onPress={() => handleDisconnect(account.id, account.institution)}
           disabled={disconnectAccountMutation.isPending}
         >
-          <XIcon color="#FF6B6B" size={20} />
+          <XIcon color={theme.error} size={20} />
         </TouchableOpacity>
       </View>
 
       <View style={styles.connectionDetails}>
-        <Typography weight={500} size={14} color="#8C78F2">
+        <Typography weight={500} size={14} color={theme.primary}>
           ID: {account.id}
         </Typography>
       </View>
@@ -171,7 +176,7 @@ const ConnectedAccountsContent = () => {
   );
 
   return (
-    <SafeAreaContainer backgroundColor="#F6F3FA">
+    <SafeAreaContainer>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
@@ -183,14 +188,14 @@ const ConnectedAccountsContent = () => {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.header}>
-            <CreditCardIcon />
-            <Typography weight={600} size={24} marginTop={12}>
+            <CreditCardIcon color={theme.primary} />
+            <Typography weight={600} size={24} marginTop={12} variant="heading">
               Connected Accounts
             </Typography>
             <Typography
               weight={400}
               size={14}
-              color="#666"
+              color={theme.textSecondary}
               marginTop={8}
               align="center"
             >
@@ -203,31 +208,36 @@ const ConnectedAccountsContent = () => {
               <Typography
                 weight={600}
                 size={16}
-                color="#8C78F2"
+                color={theme.primary}
                 marginBottom={4}
               >
                 Connected Accounts ({monoAccounts.length})
               </Typography>
-              <Typography weight={400} size={14} color="#666" marginBottom={16}>
+              <Typography
+                weight={400}
+                size={14}
+                color={theme.textSecondary}
+                marginBottom={16}
+              >
                 View and manage your connected bank accounts
               </Typography>
             </View>
 
             {isLoading ? (
               <View style={styles.emptyState}>
-                <Typography weight={500} size={16} color="#666">
+                <Typography weight={500} size={16} variant="body">
                   Loading connected accounts...
                 </Typography>
               </View>
             ) : error ? (
               <View style={styles.emptyState}>
-                <Typography weight={500} size={16} color="#d43d49">
+                <Typography weight={500} size={16} color={theme.error}>
                   Failed to load accounts
                 </Typography>
                 <Typography
                   weight={400}
                   size={14}
-                  color="#999"
+                  color={theme.textTertiary}
                   marginTop={4}
                   align="center"
                 >
@@ -238,14 +248,19 @@ const ConnectedAccountsContent = () => {
               monoAccounts.map(renderAccountCard)
             ) : (
               <View style={styles.emptyState}>
-                <CreditCardIcon />
-                <Typography weight={500} size={16} color="#666" marginTop={12}>
+                <CreditCardIcon color={theme.textTertiary} />
+                <Typography
+                  weight={500}
+                  size={16}
+                  variant="body"
+                  marginTop={12}
+                >
                   No connected accounts
                 </Typography>
                 <Typography
                   weight={400}
                   size={14}
-                  color="#999"
+                  color={theme.textTertiary}
                   marginTop={4}
                   align="center"
                 >
@@ -304,7 +319,6 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   section: {
-    backgroundColor: "#fff",
     borderRadius: 18,
     padding: 20,
     marginBottom: 20,
@@ -318,12 +332,10 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   accountCard: {
-    backgroundColor: "#F8F7FF",
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: "#E0E0E0",
   },
   accountHeader: {
     flexDirection: "row",

@@ -19,12 +19,14 @@ import { updateAccountDetails } from "@/requests/authentication";
 import { showMessage } from "react-native-flash-message";
 import { useUserData } from "@/hooks/useUserData";
 import { setLocalName } from "@/utils/storage";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const fakeCountry = "United States"; // Just a placeholder, can be replaced by user country
 
 const AccountDetails = () => {
   const { data: userData, isLoading } = useUserData();
   const queryClient = useQueryClient();
+  const { theme } = useTheme();
   const [name, setName] = useState("");
   const [number, setNumber] = useState("");
   const [country, setCountry] = useState("");
@@ -86,98 +88,163 @@ const AccountDetails = () => {
   };
 
   return (
-    <SafeAreaContainer backgroundColor="#F6F3FA">
+    <SafeAreaContainer>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         style={{ flex: 1 }}
       >
         <ScrollView contentContainerStyle={styles.container}>
           <View style={styles.header}>
-            <ProfileIcon />
-            <Typography weight={600} size={24}>
+            <ProfileIcon color={theme.primary} />
+            <Typography weight={600} size={24} variant="heading">
               Account Details
             </Typography>
           </View>
 
           {isLoading ? (
             <View style={styles.loadingContainer}>
-              <Typography weight={500} size={16} color="#666">
+              <Typography weight={500} size={16} variant="body">
                 Loading account details...
               </Typography>
             </View>
           ) : (
             <>
-              <View style={styles.section}>
-                <Text style={styles.label}>Name</Text>
+              <View
+                style={[
+                  styles.section,
+                  { backgroundColor: theme.surface, borderColor: theme.border },
+                ]}
+              >
+                <Text style={[styles.label, { color: theme.textSecondary }]}>
+                  Name
+                </Text>
                 {isEditing ? (
                   <TextInput
-                    style={styles.input}
+                    style={[
+                      styles.input,
+                      {
+                        backgroundColor: theme.inputBackground,
+                        borderColor: theme.inputBorder,
+                        color: theme.text,
+                      },
+                    ]}
                     value={tempName}
                     onChangeText={setTempName}
                     placeholder="Enter your name"
-                    placeholderTextColor="#BDBDBD"
+                    placeholderTextColor={theme.textTertiary}
                   />
                 ) : (
-                  <Text style={styles.value}>{name}</Text>
+                  <Text style={[styles.value, { color: theme.text }]}>
+                    {name}
+                  </Text>
                 )}
               </View>
 
-              <View style={styles.section}>
-                <Text style={styles.label}>Number</Text>
+              <View
+                style={[
+                  styles.section,
+                  { backgroundColor: theme.surface, borderColor: theme.border },
+                ]}
+              >
+                <Text style={[styles.label, { color: theme.textSecondary }]}>
+                  Number
+                </Text>
                 {isEditing ? (
                   <TextInput
-                    style={styles.input}
+                    style={[
+                      styles.input,
+                      {
+                        backgroundColor: theme.inputBackground,
+                        borderColor: theme.inputBorder,
+                        color: theme.text,
+                      },
+                    ]}
                     value={tempNumber}
                     onChangeText={setTempNumber}
                     placeholder="Phone number"
                     keyboardType="phone-pad"
-                    placeholderTextColor="#BDBDBD"
+                    placeholderTextColor={theme.textTertiary}
                   />
                 ) : (
-                  <Text style={styles.value}>{number}</Text>
+                  <Text style={[styles.value, { color: theme.text }]}>
+                    {number}
+                  </Text>
                 )}
               </View>
 
-              <View style={styles.section}>
-                <Text style={styles.label}>Country</Text>
+              <View
+                style={[
+                  styles.section,
+                  { backgroundColor: theme.surface, borderColor: theme.border },
+                ]}
+              >
+                <Text style={[styles.label, { color: theme.textSecondary }]}>
+                  Country
+                </Text>
                 {isEditing ? (
                   <TextInput
-                    style={styles.input}
+                    style={[
+                      styles.input,
+                      {
+                        backgroundColor: theme.inputBackground,
+                        borderColor: theme.inputBorder,
+                        color: theme.text,
+                      },
+                    ]}
                     value={tempCountry}
                     onChangeText={setTempCountry}
                     placeholder="Enter your country"
-                    placeholderTextColor="#BDBDBD"
+                    placeholderTextColor={theme.textTertiary}
                   />
                 ) : (
-                  <Text style={styles.value}>{country}</Text>
+                  <Text style={[styles.value, { color: theme.text }]}>
+                    {country}
+                  </Text>
                 )}
               </View>
 
               {isEditing && (
                 <View style={styles.buttonRow}>
                   <TouchableOpacity
-                    style={styles.saveButton}
+                    style={[
+                      styles.saveButton,
+                      { backgroundColor: theme.primary },
+                    ]}
                     onPress={handleSave}
                     disabled={updateAccountDetailsMutation.isPending}
                   >
-                    <Text style={styles.saveButtonText}>
+                    <Text
+                      style={[
+                        styles.saveButtonText,
+                        { color: theme.textInverse },
+                      ]}
+                    >
                       {updateAccountDetailsMutation.isPending
                         ? "Saving..."
                         : "Save"}
                     </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    style={styles.cancelButton}
+                    style={[
+                      styles.cancelButton,
+                      { backgroundColor: theme.backgroundSecondary },
+                    ]}
                     onPress={handleCancel}
                     disabled={updateAccountDetailsMutation.isPending}
                   >
-                    <Text style={styles.cancelButtonText}>Cancel</Text>
+                    <Text
+                      style={[
+                        styles.cancelButtonText,
+                        { color: theme.textSecondary },
+                      ]}
+                    >
+                      Cancel
+                    </Text>
                   </TouchableOpacity>
                 </View>
               )}
               {!isEditing && (
                 <Button
-                  backgroundColor="#8C78F2"
                   text="Update Profile"
                   onPress={() => setIsEditing(true)}
                 />
@@ -233,7 +300,6 @@ const styles = StyleSheet.create({
   //   },
   section: {
     width: "100%",
-    backgroundColor: "#fff",
     borderRadius: 18,
     padding: 20,
     paddingVertical: 8,
@@ -241,29 +307,25 @@ const styles = StyleSheet.create({
     shadowColor: "#bfb4f9",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
+    borderWidth: 1,
     shadowRadius: 5,
     elevation: 5,
   },
   label: {
     fontSize: 14,
-    color: "#8C78F2",
     marginBottom: 6,
     fontWeight: "600",
   },
   value: {
     fontSize: 16,
-    color: "#212121",
     fontWeight: "500",
     paddingBottom: 2,
   },
   input: {
     fontSize: 18,
-    color: "#3A265E",
     paddingVertical: 6,
     paddingHorizontal: 8,
     borderBottomWidth: 1,
-    borderBottomColor: "#EEE9F9",
-    backgroundColor: "#F5F0FF",
     borderRadius: 8,
     marginBottom: 2,
     marginTop: -4,
@@ -291,26 +353,22 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   saveButton: {
-    backgroundColor: "#8C78F2",
     paddingHorizontal: 38,
     paddingVertical: 13,
     borderRadius: 8,
     marginRight: 16,
   },
   saveButtonText: {
-    color: "#fff",
     fontWeight: "700",
     fontSize: 16,
     letterSpacing: 1,
   },
   cancelButton: {
-    backgroundColor: "#F3F2FD",
     paddingHorizontal: 28,
     paddingVertical: 13,
     borderRadius: 14,
   },
   cancelButtonText: {
-    color: "#8C78F2",
     fontWeight: "700",
     fontSize: 16,
     letterSpacing: 1,

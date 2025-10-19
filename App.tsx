@@ -5,6 +5,7 @@ import BaseNavigator from "./navigator/baseNavigator";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import FlashMessage from "react-native-flash-message";
 import * as Notifications from "expo-notifications";
+import { ThemeProvider } from "./contexts/ThemeContext";
 
 export default function App() {
   Notifications.setNotificationHandler({
@@ -17,11 +18,13 @@ export default function App() {
   });
   const queryClient = new QueryClient();
   return (
-    <NavigationContainer>
-      <QueryClientProvider client={queryClient}>
-        <BaseNavigator />
-        <FlashMessage position="top" />
-      </QueryClientProvider>
-    </NavigationContainer>
+    <ThemeProvider>
+      <NavigationContainer>
+        <QueryClientProvider client={queryClient}>
+          <BaseNavigator />
+          <FlashMessage position="top" />
+        </QueryClientProvider>
+      </NavigationContainer>
+    </ThemeProvider>
   );
 }

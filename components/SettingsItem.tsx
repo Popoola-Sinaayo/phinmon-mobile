@@ -3,6 +3,7 @@ import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Typography from "./Typography";
 import ChevronRight from "@/assets/svg/ChevronRight";
+import { useTheme } from "@/contexts/ThemeContext";
 
 type SettingsItemProps = {
   icon: React.ReactNode;
@@ -15,17 +16,24 @@ const SettingsItem: React.FC<SettingsItemProps> = ({
   label,
   onPress,
 }) => {
+  const { theme } = useTheme();
+
   return (
     <TouchableOpacity
-      style={styles.container}
+      style={[
+        styles.container,
+        { backgroundColor: theme.surface, borderColor: theme.border },
+      ]}
       onPress={onPress}
       activeOpacity={0.7}
     >
       <View style={styles.itemContainer}>
         <View style={styles.iconContainer}>{icon}</View>
-        <Typography weight={500}>{label}</Typography>
+        <Typography weight={500} color={theme.text}>
+          {label}
+        </Typography>
       </View>
-      <ChevronRight />
+      <ChevronRight color={theme.textSecondary} />
     </TouchableOpacity>
   );
 };
@@ -36,9 +44,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 14,
     paddingHorizontal: 16,
-    backgroundColor: "#fff",
     borderWidth: 1,
-    borderColor: "#eee",
     borderRadius: 10,
     justifyContent: "space-between",
     marginBottom: 15,

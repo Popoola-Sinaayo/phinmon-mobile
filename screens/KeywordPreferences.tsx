@@ -21,6 +21,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateKeywordPreferences } from "@/requests/authentication";
 import { showMessage } from "react-native-flash-message";
 import { useUserData } from "@/hooks/useUserData";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface UserMappedKeyWords {
   food: string[];
@@ -42,6 +43,7 @@ interface UserMappedKeyWords {
 const KeywordPreferences = () => {
   const { data: userData, isLoading } = useUserData();
   const queryClient = useQueryClient();
+  const { theme } = useTheme();
   const [userMappedKeyWords, setUserMappedKeyWords] =
     useState<UserMappedKeyWords>({
       food: [],
@@ -166,48 +168,67 @@ const KeywordPreferences = () => {
     const [newKeyword, setNewKeyword] = useState("");
 
     return (
-      <View key={category.key} style={styles.keywordSection}>
+      <View
+        key={category.key}
+        style={[styles.keywordSection, { borderBottomColor: theme.border }]}
+      >
         <View style={styles.categoryHeader}>
           <Text style={styles.categoryIcon}>{category.icon}</Text>
-          <Typography weight={600} size={16} color="#212121">
+          <Typography weight={600} size={16} variant="body">
             {category.label}
           </Typography>
         </View>
 
         <View style={styles.keywordInputContainer}>
           <TextInput
-            style={styles.keywordInput}
+            style={[
+              styles.keywordInput,
+              {
+                backgroundColor: theme.inputBackground,
+                borderColor: theme.inputBorder,
+                color: theme.text,
+              },
+            ]}
             value={newKeyword}
             onChangeText={setNewKeyword}
             placeholder="Add keyword..."
-            placeholderTextColor="#BDBDBD"
+            placeholderTextColor={theme.textTertiary}
             onSubmitEditing={() => {
               addKeyword(category.key, newKeyword);
               setNewKeyword("");
             }}
           />
           <TouchableOpacity
-            style={styles.addButton}
+            style={[styles.addButton, { backgroundColor: theme.primary }]}
             onPress={() => {
               addKeyword(category.key, newKeyword);
               setNewKeyword("");
             }}
           >
-            <PlusIcon />
+            <PlusIcon color={theme.textInverse} />
           </TouchableOpacity>
         </View>
 
         <View style={styles.keywordsList}>
           {keywords.map((keyword, index) => (
-            <View key={index} style={styles.keywordTag}>
-              <Typography size={14} color="#8C78F2">
+            <View
+              key={index}
+              style={[
+                styles.keywordTag,
+                {
+                  backgroundColor: theme.primary + "20",
+                  borderColor: theme.primary,
+                },
+              ]}
+            >
+              <Typography size={14} color={theme.primary}>
                 {keyword}
               </Typography>
               <TouchableOpacity
                 onPress={() => removeKeyword(category.key, index)}
                 style={styles.removeButton}
               >
-                <XIcon />
+                <XIcon color={theme.error} />
               </TouchableOpacity>
             </View>
           ))}
@@ -217,7 +238,7 @@ const KeywordPreferences = () => {
   };
 
   return (
-    <SafeAreaContainer backgroundColor="#F6F3FA">
+    <SafeAreaContainer>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
@@ -229,14 +250,14 @@ const KeywordPreferences = () => {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.header}>
-            <HashIcon />
-            <Typography weight={600} size={24} marginTop={12}>
+            <HashIcon color={theme.primary} />
+            <Typography weight={600} size={24} marginTop={12} variant="heading">
               Keyword Preferences
             </Typography>
             <Typography
               weight={400}
               size={14}
-              color="#666"
+              color={theme.textSecondary}
               marginTop={8}
               align="center"
             >
@@ -246,17 +267,22 @@ const KeywordPreferences = () => {
 
           {isLoading ? (
             <View style={styles.loadingContainer}>
-              <Typography weight={500} size={16} color="#666">
+              <Typography weight={500} size={16} variant="body">
                 Loading keywords...
               </Typography>
             </View>
           ) : (
             <>
-              <View style={styles.section}>
+              <View
+                style={[
+                  styles.section,
+                  { backgroundColor: theme.surface, borderColor: theme.border },
+                ]}
+              >
                 <Typography
                   weight={600}
                   size={16}
-                  color="#8C78F2"
+                  color={theme.primary}
                   marginBottom={12}
                 >
                   Category Keywords
@@ -264,7 +290,7 @@ const KeywordPreferences = () => {
                 <Typography
                   weight={400}
                   size={14}
-                  color="#666"
+                  color={theme.textSecondary}
                   marginBottom={16}
                 >
                   Add keywords for each category to improve transaction
@@ -275,7 +301,6 @@ const KeywordPreferences = () => {
               </View>
 
               <Button
-                backgroundColor="#8C78F2"
                 text={
                   updateKeywordsMutation.isPending
                     ? "Updating..."
@@ -307,10 +332,10 @@ const styles = StyleSheet.create({
     paddingVertical: 40,
   },
   section: {
-    backgroundColor: "#fff",
     borderRadius: 18,
     padding: 20,
     marginBottom: 20,
+    borderWidth: 1,
     shadowColor: "#bfb4f9",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -321,7 +346,6 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     paddingBottom: 26,
     borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0",
   },
   categoryHeader: {
     flexDirection: "row",
@@ -339,16 +363,13 @@ const styles = StyleSheet.create({
   },
   keywordInput: {
     flex: 1,
-    backgroundColor: "#F8F7FF",
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 10,
     borderWidth: 1,
-    borderColor: "#E0E0E0",
     marginRight: 8,
   },
   addButton: {
-    backgroundColor: "#8C78F2",
     borderRadius: 8,
     padding: 10,
     alignItems: "center",
@@ -362,12 +383,10 @@ const styles = StyleSheet.create({
   keywordTag: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F0EDFF",
     borderRadius: 16,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderWidth: 1,
-    borderColor: "#8C78F2",
   },
   removeButton: {
     marginLeft: 6,

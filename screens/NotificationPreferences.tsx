@@ -19,6 +19,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateNotificationPreferences } from "@/requests/authentication";
 import { showMessage } from "react-native-flash-message";
 import { useUserData } from "@/hooks/useUserData";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface NotificationPreferences {
   notifications: "all" | "over_set_amount" | "balance_below_amount" | "none";
@@ -28,6 +29,7 @@ interface NotificationPreferences {
 const NotificationPreferences = () => {
   const { data: userData, isLoading } = useUserData();
   const queryClient = useQueryClient();
+  const { theme } = useTheme();
   const [preferences, setPreferences] = useState<NotificationPreferences>({
     notifications: "all",
     notificationSetAmount: 100,
@@ -94,8 +96,18 @@ const NotificationPreferences = () => {
   };
 
   const renderNotificationTypeSelector = () => (
-    <View style={styles.section}>
-      <Typography weight={600} size={16} color="#8C78F2" marginBottom={12}>
+    <View
+      style={[
+        styles.section,
+        { backgroundColor: theme.surface, borderColor: theme.border },
+      ]}
+    >
+      <Typography
+        weight={600}
+        size={16}
+        color={theme.primary}
+        marginBottom={12}
+      >
         Notification Type
       </Typography>
       {notificationTypes.map((type) => (
@@ -103,7 +115,14 @@ const NotificationPreferences = () => {
           key={type.key}
           style={[
             styles.optionCard,
-            preferences.notifications === type.key && styles.selectedOption,
+            {
+              backgroundColor: theme.backgroundSecondary,
+              borderColor: theme.border,
+            },
+            preferences.notifications === type.key && {
+              backgroundColor: theme.primary + "20",
+              borderColor: theme.primary,
+            },
           ]}
           onPress={() =>
             setPreferences((prev) => ({
@@ -117,12 +136,19 @@ const NotificationPreferences = () => {
               weight={600}
               size={16}
               color={
-                preferences.notifications === type.key ? "#8C78F2" : "#212121"
+                preferences.notifications === type.key
+                  ? theme.primary
+                  : theme.text
               }
             >
               {type.label}
             </Typography>
-            <Typography weight={400} size={14} color="#666" marginTop={4}>
+            <Typography
+              weight={400}
+              size={14}
+              color={theme.textSecondary}
+              marginTop={4}
+            >
               {type.description}
             </Typography>
           </View>
@@ -147,14 +173,30 @@ const NotificationPreferences = () => {
       preferences.notifications === "balance_below_amount"
     ) {
       return (
-        <View style={styles.section}>
-          <Typography weight={600} size={16} color="#8C78F2" marginBottom={12}>
+        <View
+          style={[
+            styles.section,
+            { backgroundColor: theme.surface, borderColor: theme.border },
+          ]}
+        >
+          <Typography
+            weight={600}
+            size={16}
+            color={theme.primary}
+            marginBottom={12}
+          >
             Amount Threshold
           </Typography>
           <View style={styles.amountInputContainer}>
-            {/* <Text style={styles.currencySymbol}>$</Text> */}
             <TextInput
-              style={styles.amountInput}
+              style={[
+                styles.amountInput,
+                {
+                  backgroundColor: theme.inputBackground,
+                  borderColor: theme.inputBorder,
+                  color: theme.text,
+                },
+              ]}
               value={preferences.notificationSetAmount.toString()}
               onChangeText={(text) => {
                 const amount = parseFloat(text) || 0;
@@ -165,7 +207,7 @@ const NotificationPreferences = () => {
               }}
               keyboardType="numeric"
               placeholder="0.00"
-              placeholderTextColor="#BDBDBD"
+              placeholderTextColor={theme.textTertiary}
             />
           </View>
         </View>
@@ -175,21 +217,21 @@ const NotificationPreferences = () => {
   };
 
   return (
-    <SafeAreaContainer backgroundColor="#F6F3FA">
+    <SafeAreaContainer>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         style={{ flex: 1 }}
       >
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={styles.header}>
-            <NotificationIcon />
-            <Typography weight={600} size={24} marginTop={12}>
+            <NotificationIcon color={theme.primary} />
+            <Typography weight={600} size={24} marginTop={12} variant="heading">
               Notification Preferences
             </Typography>
             <Typography
               weight={400}
               size={14}
-              color="#666"
+              color={theme.textSecondary}
               marginTop={8}
               align="center"
             >
@@ -199,7 +241,7 @@ const NotificationPreferences = () => {
 
           {isLoading ? (
             <View style={styles.loadingContainer}>
-              <Typography weight={500} size={16} color="#666">
+              <Typography weight={500} size={16} variant="body">
                 Loading preferences...
               </Typography>
             </View>
@@ -209,16 +251,14 @@ const NotificationPreferences = () => {
               {renderAmountInput()}
 
               <Button
-                backgroundColor="#8C78F2"
                 text={
                   updatePreferencesMutation.isPending
                     ? "Saving..."
                     : "Save Preferences"
                 }
                 onPress={handleSave}
-                  width="100%"
-                  isLoading={updatePreferencesMutation.isPending}
-                // disabled={updatePreferencesMutation.isPending}
+                width="100%"
+                isLoading={updatePreferencesMutation.isPending}
               />
             </>
           )}
@@ -242,7 +282,6 @@ const styles = StyleSheet.create({
     paddingVertical: 40,
   },
   section: {
-    backgroundColor: "#fff",
     borderRadius: 18,
     padding: 20,
     marginBottom: 20,
@@ -251,20 +290,15 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 5,
+    borderWidth: 1,
   },
   optionCard: {
     flexDirection: "row",
     alignItems: "center",
     padding: 16,
-    backgroundColor: "#F8F7FF",
     borderRadius: 12,
     marginBottom: 12,
     borderWidth: 2,
-    borderColor: "transparent",
-  },
-  selectedOption: {
-    borderColor: "#8C78F2",
-    backgroundColor: "#F0EDFF",
   },
   optionContent: {
     flex: 1,
@@ -274,38 +308,33 @@ const styles = StyleSheet.create({
     height: 20,
     borderRadius: 10,
     borderWidth: 2,
-    borderColor: "#E0E0E0",
     alignItems: "center",
     justifyContent: "center",
   },
   selectedRadio: {
-    borderColor: "#8C78F2",
+    // borderColor will be set dynamically
   },
   radioInner: {
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: "#8C78F2",
+    // backgroundColor will be set dynamically
   },
   amountInputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F8F7FF",
     borderRadius: 12,
     paddingHorizontal: 16,
     borderWidth: 2,
-    borderColor: "#E0E0E0",
   },
   currencySymbol: {
     fontSize: 18,
-    color: "#8C78F2",
     fontWeight: "600",
     marginRight: 8,
   },
   amountInput: {
     flex: 1,
     fontSize: 18,
-    color: "#212121",
     paddingVertical: 12,
   },
 });

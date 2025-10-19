@@ -9,6 +9,7 @@ import CategoryPickerModal from "./CategoryPickerModal";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateTransactionCategory } from "@/requests/dashboard";
 import { showMessage } from "react-native-flash-message";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const TransactionItem: React.FC<{
   category: string;
@@ -31,6 +32,7 @@ const TransactionItem: React.FC<{
 }) => {
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const queryClient = useQueryClient();
+  const { theme } = useTheme();
 
   const updateCategoryMutation = useMutation({
     mutationFn: ({
@@ -77,7 +79,7 @@ const TransactionItem: React.FC<{
   return (
     <>
       <TouchableOpacity
-        style={styles.container}
+        style={[styles.container, { borderBottomColor: theme.border }]}
         onPress={() => transactionId && setShowCategoryModal(true)}
         disabled={!transactionId || updateCategoryMutation.isPending}
       >
@@ -91,12 +93,12 @@ const TransactionItem: React.FC<{
             {details.elem}
           </View>
           <View style={{}}>
-            <Typography color="#414141" size={16} weight={500}>
+            <Typography color={theme.text} size={16} weight={500}>
               {category === "others"
                 ? "Miscellaneous"
                 : capitalizeFirstWord(category)}
             </Typography>
-            <Typography size={12} color="#9b9ea2">
+            <Typography size={12} color={theme.textSecondary}>
               {description
                 ? description.length > 20
                   ? description.substring(0, 20) + "..."
@@ -111,8 +113,8 @@ const TransactionItem: React.FC<{
               category === "savings" ||
               category === "income" ||
               type === "credit"
-                ? "#58a97d"
-                : "#d43d49"
+                ? theme.success
+                : theme.error
             }
             size={16}
             weight={500}
@@ -124,7 +126,7 @@ const TransactionItem: React.FC<{
               : "-"}{" "}
             {formatCurrency(parseFloat(amount || "0"), { currencyCode })}
           </Typography>
-          <Typography size={12} color="#9b9ea2" align="right">
+          <Typography size={12} color={theme.textSecondary} align="right">
             {new Date(date).toLocaleDateString(undefined, {
               day: "2-digit",
               month: "short",
@@ -151,7 +153,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     flexDirection: "row",
-    borderBottomColor: "#E0E0E0",
     borderBottomWidth: 1,
     paddingVertical: 12,
     width: "100%",

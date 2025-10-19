@@ -19,10 +19,11 @@ export interface TypographyProps {
   size?: number;
   color?: string;
   weight?: any;
-    children?: React.ReactNode | string;
-    marginBottom?: number;
+  children?: React.ReactNode | string;
+  marginBottom?: number;
   marginTop?: number;
   align?: "left" | "center" | "right";
+  variant?: "heading" | "subheading" | "body" | "caption" | "inverse";
 }
 
 export interface TextInputComponentProps {

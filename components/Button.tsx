@@ -8,11 +8,12 @@ import {
 import React from "react";
 import { ButtonProps } from "../types/component";
 import Typography from "./Typography";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const Button: React.FC<ButtonProps> = ({
   text,
-  backgroundColor = "#000",
-  textColor = "#fff",
+  backgroundColor,
+  textColor,
   textSize = 14,
   textWeight = "400",
   borderRadius = 5,
@@ -22,11 +23,16 @@ const Button: React.FC<ButtonProps> = ({
   onPress,
   isLoading = false,
 }) => {
+  const { theme } = useTheme();
+
+  const finalBackgroundColor = backgroundColor || theme.buttonPrimary;
+  const finalTextColor = textColor || theme.buttonText;
+
   return (
     <Pressable
       style={{
         width,
-        backgroundColor: isLoading ? "#A9A9A9" : backgroundColor,
+        backgroundColor: isLoading ? theme.textTertiary : finalBackgroundColor,
         borderRadius,
         paddingTop,
         paddingBottom,
@@ -42,10 +48,10 @@ const Button: React.FC<ButtonProps> = ({
         text={text}
         weight={textWeight}
         size={textSize}
-        color={textColor}
+        color={finalTextColor}
       />
       {isLoading && (
-        <ActivityIndicator animating={isLoading} color={textColor} />
+        <ActivityIndicator animating={isLoading} color={finalTextColor} />
       )}
     </Pressable>
   );

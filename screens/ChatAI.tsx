@@ -23,10 +23,12 @@ import { useMutation } from "@tanstack/react-query";
 import { sendChatMessage } from "@/requests/authentication";
 import { getChatMessages, saveChatMessage } from "@/utils/storage";
 import { showMessage } from "react-native-flash-message";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const ChatAI = () => {
   const [message, setMessage] = useState("");
   const [chatMessages, setChatMessages] = useState<any[]>([]);
+  const { theme } = useTheme();
 
   const sendMessageMutation = useMutation({
     mutationFn: sendChatMessage,
@@ -98,7 +100,7 @@ const ChatAI = () => {
         keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       >
         <View style={styles.topContainer}>
-          <Typography weight={600} size={24}>
+          <Typography weight={600} size={24} variant="heading">
             Chat With Phinny{" "}
           </Typography>
         </View>
@@ -121,7 +123,7 @@ const ChatAI = () => {
             />
           ) : (
             <View style={styles.emptyState}>
-              <Typography color="#000000">
+              <Typography variant="body">
                 No messages yet — your wallet's chilling 😎
               </Typography>
             </View>
@@ -130,21 +132,26 @@ const ChatAI = () => {
           {/* Loading indicator */}
           {sendMessageMutation.isPending && (
             <View style={styles.loadingContainer}>
-              <ActivityIndicator size="small" color="#8C78F2" />
-              <Typography size={12} color="#8C78F2" marginTop={5}>
+              <ActivityIndicator size="small" color={theme.primary} />
+              <Typography size={12} color={theme.primary} marginTop={5}>
                 Phinny is typing...
               </Typography>
             </View>
           )}
         </View>
 
-        <View style={styles.inputContainer}>
+        <View
+          style={[
+            styles.inputContainer,
+            { backgroundColor: theme.surface, borderColor: theme.border },
+          ]}
+        >
           <TextInput
-            style={[styles.input]}
+            style={[styles.input, { color: theme.text }]}
             placeholder="Ready for some no-cap money advice?"
             multiline
-            numberOfLines={3}
-            placeholderTextColor={"#A3A3A3"}
+            numberOfLines={4}
+            placeholderTextColor={theme.textTertiary}
             value={message}
             onChangeText={setMessage}
             editable={!sendMessageMutation.isPending}
@@ -161,8 +168,8 @@ const ChatAI = () => {
             <SendIcon
               color={
                 !message.trim() || sendMessageMutation.isPending
-                  ? "#A3A3A3"
-                  : "#8C78F2"
+                  ? theme.textTertiary
+                  : theme.primary
               }
             />
           </TouchableOpacity>
@@ -199,23 +206,25 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
     gap: 10,
     paddingHorizontal: 10,
-    paddingVertical: 10,
+    paddingVertical: 0,
+    borderWidth: 1,
+    borderRadius: 14,
   },
   input: {
     flex: 1,
     borderWidth: 1,
-    backgroundColor: "#F4F4F4",
-    borderColor: "#CBCBCB",
+    backgroundColor: "transparent",
+    borderColor: "transparent",
     borderRadius: 14,
-    color: "#000000",
     paddingHorizontal: 15,
-    paddingVertical: 12,
-    maxHeight: 100,
+    paddingVertical: 0,
+    paddingBottom: 10,
+    // maxHeight: 100,
   },
   sendButton: {
     padding: 8,
     borderRadius: 20,
-    backgroundColor: "#F4F4F4",
+    backgroundColor: "transparent",
   },
   sendButtonDisabled: {
     opacity: 0.5,

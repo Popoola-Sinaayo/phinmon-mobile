@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet,  } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface SafeAreaContainerProps {
   children: React.ReactNode;
@@ -11,17 +12,30 @@ interface SafeAreaContainerProps {
 
 const SafeAreaContainer: React.FC<SafeAreaContainerProps> = ({
   children,
-  backgroundColor = "#f7f7f7",
-  statusBarColor = "#7A5FFF",
+  backgroundColor,
+  statusBarColor,
   style,
 }) => {
+  const { theme } = useTheme();
+
+  const finalBackgroundColor = backgroundColor || theme.background;
+  const finalStatusBarColor = statusBarColor || theme.statusBar;
+
   return (
-    <View style={[styles.outerContainer, { backgroundColor: statusBarColor }]}>
+    <View
+      style={[styles.outerContainer, { backgroundColor: finalStatusBarColor }]}
+    >
       <SafeAreaView
         style={styles.safeAreaContainer}
         edges={["top", "left", "right"]}
       >
-        <View style={[styles.innerContainer, { backgroundColor }, style]}>
+        <View
+          style={[
+            styles.innerContainer,
+            { backgroundColor: finalBackgroundColor },
+            style,
+          ]}
+        >
           {children}
         </View>
       </SafeAreaView>

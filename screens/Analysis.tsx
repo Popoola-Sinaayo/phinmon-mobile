@@ -17,6 +17,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { getTransactions, getTransactionsByDate } from "@/requests/dashboard";
 import { showMessage } from "react-native-flash-message";
 import { formatCurrency } from "@/utils/currencyFormatter";
+import { useTheme } from "@/contexts/ThemeContext";
 
 type VisualizerType = "pie" | "bar" | "line" | "area" | "polar";
 
@@ -31,6 +32,7 @@ const Analysis = () => {
   const [isFiltered, setIsFiltered] = useState(false);
   const [currentVisualizer, setCurrentVisualizer] =
     useState<VisualizerType>("pie");
+  const { theme } = useTheme();
 
   const {
     data: allTransactions,
@@ -243,12 +245,17 @@ const Analysis = () => {
 
   return (
     <SafeAreaContainer>
-      <ScrollView>
+      <ScrollView style={{ backgroundColor: theme.background }}>
         <View style={styles.topContainer}>
-          <Typography weight={600} size={24}>
+          <Typography weight={600} size={24} variant="heading">
             Analysis
           </Typography>
-          <Typography size={12} color="#8C78F2" weight={500} marginTop={4}>
+          <Typography
+            size={12}
+            color={theme.primary}
+            weight={500}
+            marginTop={4}
+          >
             Filter by date range to analyze specific periods
           </Typography>
         </View>
@@ -260,16 +267,31 @@ const Analysis = () => {
           style={[styles.visualizerScrollView, { marginTop: 8, marginLeft: 4 }]}
         >
           <TouchableOpacity
-            style={styles.filterButton}
+            style={[
+              styles.filterButton,
+              {
+                backgroundColor: theme.buttonSecondary,
+                borderColor: theme.primary,
+              },
+            ]}
             onPress={() => setShowDateFilter(true)}
           >
-            <Typography color="#8C78F2" weight={500} size={14}>
+            <Typography color={theme.primary} weight={500} size={14}>
               📅 Filter by Date
             </Typography>
           </TouchableOpacity>
           {isFiltered && (
-            <TouchableOpacity style={styles.clearButton} onPress={clearFilter}>
-              <Typography color="#d43d49" weight={500} size={14}>
+            <TouchableOpacity
+              style={[
+                styles.clearButton,
+                {
+                  backgroundColor: theme.error + "20",
+                  borderColor: theme.error,
+                },
+              ]}
+              onPress={clearFilter}
+            >
+              <Typography color={theme.error} weight={500} size={14}>
                 Clear Filter
               </Typography>
             </TouchableOpacity>
@@ -277,14 +299,20 @@ const Analysis = () => {
           <TouchableOpacity
             style={[
               styles.visualizerButton,
-              transactionType === "debit" && styles.visualizerButtonActive,
+              {
+                backgroundColor: theme.buttonSecondary,
+                borderColor: theme.primary,
+              },
+              transactionType === "debit" && { backgroundColor: theme.primary },
             ]}
             onPress={() => setTransactionType("debit")}
           >
             <Typography
               size={12}
               weight={500}
-              color={transactionType === "debit" ? "#fff" : "#8C78F2"}
+              color={
+                transactionType === "debit" ? theme.textInverse : theme.primary
+              }
             >
               Expenses
             </Typography>
@@ -293,14 +321,22 @@ const Analysis = () => {
           <TouchableOpacity
             style={[
               styles.visualizerButton,
-              transactionType === "credit" && styles.visualizerButtonActive,
+              {
+                backgroundColor: theme.buttonSecondary,
+                borderColor: theme.primary,
+              },
+              transactionType === "credit" && {
+                backgroundColor: theme.primary,
+              },
             ]}
             onPress={() => setTransactionType("credit")}
           >
             <Typography
               size={12}
               weight={500}
-              color={transactionType === "credit" ? "#fff" : "#8C78F2"}
+              color={
+                transactionType === "credit" ? theme.textInverse : theme.primary
+              }
             >
               Income
             </Typography>
@@ -309,7 +345,12 @@ const Analysis = () => {
 
         {/* Visualizer Switcher */}
         <View style={styles.visualizerContainer}>
-          <Typography weight={500} size={16} marginBottom={10}>
+          <Typography
+            weight={500}
+            size={16}
+            marginBottom={10}
+            variant="subheading"
+          >
             Choose Visualization:
           </Typography>
           <ScrollView
@@ -322,15 +363,24 @@ const Analysis = () => {
                 key={option.key}
                 style={[
                   styles.visualizerButton,
-                  currentVisualizer === option.key &&
-                    styles.visualizerButtonActive,
+                  {
+                    backgroundColor: theme.buttonSecondary,
+                    borderColor: theme.primary,
+                  },
+                  currentVisualizer === option.key && {
+                    backgroundColor: theme.primary,
+                  },
                 ]}
                 onPress={() => switchVisualizer(option.key)}
               >
                 <Typography
                   size={12}
                   weight={500}
-                  color={currentVisualizer === option.key ? "#fff" : "#8C78F2"}
+                  color={
+                    currentVisualizer === option.key
+                      ? theme.textInverse
+                      : theme.primary
+                  }
                 >
                   {option.icon} {option.label}
                 </Typography>
@@ -341,13 +391,21 @@ const Analysis = () => {
         {displayData && displayData.length > 0 && DATA.length > 0 ? (
           <>
             <View style={styles.chartContainer}>{renderChart()}</View>
-            <View style={styles.legendContainer}>
+            <View
+              style={[
+                styles.legendContainer,
+                {
+                  backgroundColor: theme.backgroundSecondary,
+                  borderColor: theme.border,
+                },
+              ]}
+            >
               <Typography
                 weight={600}
                 size={18}
                 marginBottom={20}
                 align="center"
-                color="#2D3748"
+                variant="heading"
               >
                 Category Breakdown
               </Typography>
@@ -357,7 +415,16 @@ const Analysis = () => {
                     (item.value / DATA.reduce((sum, d) => sum + d.value, 0)) *
                     100;
                   return (
-                    <View key={item.label} style={styles.legendItem}>
+                    <View
+                      key={item.label}
+                      style={[
+                        styles.legendItem,
+                        {
+                          backgroundColor: theme.surface,
+                          borderColor: theme.border,
+                        },
+                      ]}
+                    >
                       <View style={styles.legendItemLeft}>
                         <View
                           style={[
@@ -366,10 +433,10 @@ const Analysis = () => {
                           ]}
                         />
                         <View style={styles.legendItemInfo}>
-                          <Typography weight={600} size={15} color="#2D3748">
+                          <Typography weight={600} size={15} variant="body">
                             {item.label}
                           </Typography>
-                          <Typography weight={500} size={12} color="#718096">
+                          <Typography weight={500} size={12} variant="caption">
                             {percentage.toFixed(1)}% of total
                           </Typography>
                         </View>
@@ -378,7 +445,7 @@ const Analysis = () => {
                         <Typography
                           weight={700}
                           size={16}
-                          color="#1A202C"
+                          variant="body"
                           align="right"
                         >
                           {formatCurrency(item.value, {
@@ -386,7 +453,10 @@ const Analysis = () => {
                           })}
                         </Typography>
                         <View
-                          style={[styles.legendProgressBar, { width: "100%" }]}
+                          style={[
+                            styles.legendProgressBar,
+                            { width: "100%", backgroundColor: theme.border },
+                          ]}
                         >
                           <View
                             style={[
@@ -407,7 +477,7 @@ const Analysis = () => {
           </>
         ) : (
           <View style={styles.noAnalysisContainer}>
-            <Typography weight={400} size={14} align="center">
+            <Typography weight={400} size={14} align="center" variant="body">
               {isFiltered
                 ? "No transactions found for selected date range"
                 : "No analysis yet — your wallet's chilling 😎"}
@@ -423,8 +493,15 @@ const Analysis = () => {
           onRequestClose={() => setShowDateFilter(false)}
         >
           <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
-              <Typography weight={600} size={18} marginBottom={20}>
+            <View
+              style={[styles.modalContent, { backgroundColor: theme.surface }]}
+            >
+              <Typography
+                weight={600}
+                size={18}
+                marginBottom={20}
+                variant="heading"
+              >
                 Filter by Date Range
               </Typography>
 
@@ -442,20 +519,26 @@ const Analysis = () => {
 
               <View style={styles.modalButtons}>
                 <TouchableOpacity
-                  style={styles.cancelModalButton}
+                  style={[
+                    styles.cancelModalButton,
+                    { backgroundColor: theme.backgroundSecondary },
+                  ]}
                   onPress={() => setShowDateFilter(false)}
                 >
-                  <Typography color="#666" weight={500}>
+                  <Typography color={theme.textSecondary} weight={500}>
                     Cancel
                   </Typography>
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  style={styles.applyButton}
+                  style={[
+                    styles.applyButton,
+                    { backgroundColor: theme.primary },
+                  ]}
                   onPress={handleFilterByDate}
                   disabled={filterByDateMutation.isPending}
                 >
-                  <Typography color="#fff" weight={500}>
+                  <Typography color={theme.textInverse} weight={500}>
                     {filterByDateMutation.isPending
                       ? "Filtering..."
                       : "Apply Filter"}
@@ -493,21 +576,17 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   filterButton: {
-    backgroundColor: "#F0EDFF",
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#8C78F2",
     marginHorizontal: 8,
   },
   clearButton: {
-    backgroundColor: "#FFE6E6",
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#d43d49",
   },
   buttonContainer: {
     width: "90%",
@@ -519,11 +598,9 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginTop: 24,
     marginBottom: 20,
-    backgroundColor: "#F8FAFC",
     borderRadius: 16,
     padding: 20,
     borderWidth: 1,
-    borderColor: "#E2E8F0",
   },
   legendList: {
     gap: 16,
@@ -532,7 +609,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#FFFFFF",
     borderRadius: 12,
     padding: 16,
     shadowColor: "#000",
@@ -544,7 +620,6 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 2,
     borderWidth: 1,
-    borderColor: "#F1F5F9",
   },
   legendItemLeft: {
     flexDirection: "row",
@@ -574,7 +649,6 @@ const styles = StyleSheet.create({
   },
   legendProgressBar: {
     height: 4,
-    backgroundColor: "#E2E8F0",
     borderRadius: 2,
     marginTop: 6,
     overflow: "hidden",
@@ -595,7 +669,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalContent: {
-    backgroundColor: "#fff",
     borderRadius: 20,
     padding: 24,
     width: "90%",
@@ -609,14 +682,12 @@ const styles = StyleSheet.create({
   },
   cancelModalButton: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
     paddingVertical: 12,
     borderRadius: 8,
     alignItems: "center",
   },
   applyButton: {
     flex: 1,
-    backgroundColor: "#8C78F2",
     paddingVertical: 12,
     borderRadius: 8,
     alignItems: "center",
@@ -631,19 +702,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   visualizerButton: {
-    backgroundColor: "#F0EDFF",
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#8C78F2",
     marginRight: 8,
     minWidth: 100,
     alignItems: "center",
-  },
-  visualizerButtonActive: {
-    backgroundColor: "#8C78F2",
-    borderColor: "#8C78F2",
   },
   chartContainer: {
     marginTop: 20,

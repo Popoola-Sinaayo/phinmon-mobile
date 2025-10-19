@@ -15,6 +15,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { getTransactions, getTransactionsByDate } from "@/requests/dashboard";
 import DatePicker from "@/components/DatePicker";
 import { showMessage } from "react-native-flash-message";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const TransactionHistory = () => {
   const [startDate, setStartDate] = useState<Date>(new Date());
@@ -22,6 +23,7 @@ const TransactionHistory = () => {
   const [showDateFilter, setShowDateFilter] = useState(false);
   const [filteredData, setFilteredData] = useState<any[]>([]);
   const [isFiltered, setIsFiltered] = useState(false);
+  const { theme } = useTheme();
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["transactions"],
@@ -80,23 +82,22 @@ const TransactionHistory = () => {
 
   if (error) {
     return (
-      <SafeAreaContainer backgroundColor="#f7f7f7">
+      <SafeAreaContainer>
         <View style={styles.topContainer}>
-          <Typography weight={600} size={24}>
+          <Typography weight={600} size={24} variant="heading">
             Transaction History
           </Typography>
           <Typography
             size={12}
-            color="#8C78F2"
+            color={theme.primary}
             weight={500}
             marginTop={4}
-            // style={styles.infoText}
           >
             Tap any transaction to change its category
           </Typography>
         </View>
         <View style={styles.errorContainer}>
-          <Typography weight={400} size={14} align="center" color="#d43d49">
+          <Typography weight={400} size={14} align="center" color={theme.error}>
             Failed to load transactions. Please try again.
           </Typography>
         </View>
@@ -105,12 +106,12 @@ const TransactionHistory = () => {
   }
 
   return (
-    <SafeAreaContainer backgroundColor="#f7f7f7">
+    <SafeAreaContainer>
       <View style={styles.topContainer}>
-        <Typography weight={600} size={24}>
+        <Typography weight={600} size={24} variant="heading">
           Transaction History
         </Typography>
-        <Typography size={12} color="#8C78F2" weight={500} marginTop={4}>
+        <Typography size={12} color={theme.primary} weight={500} marginTop={4}>
           Tap any transaction to change its category
         </Typography>
       </View>
@@ -118,16 +119,28 @@ const TransactionHistory = () => {
       {/* Filter Section */}
       <View style={styles.filterContainer}>
         <TouchableOpacity
-          style={styles.filterButton}
+          style={[
+            styles.filterButton,
+            {
+              backgroundColor: theme.buttonSecondary,
+              borderColor: theme.primary,
+            },
+          ]}
           onPress={() => setShowDateFilter(true)}
         >
-          <Typography color="#8C78F2" weight={500} size={14}>
+          <Typography color={theme.primary} weight={500} size={14}>
             📅 Filter by Date
           </Typography>
         </TouchableOpacity>
         {isFiltered && (
-          <TouchableOpacity style={styles.clearButton} onPress={clearFilter}>
-            <Typography color="#d43d49" weight={500} size={14}>
+          <TouchableOpacity
+            style={[
+              styles.clearButton,
+              { backgroundColor: theme.error + "20", borderColor: theme.error },
+            ]}
+            onPress={clearFilter}
+          >
+            <Typography color={theme.error} weight={500} size={14}>
               Clear Filter
             </Typography>
           </TouchableOpacity>
@@ -154,7 +167,7 @@ const TransactionHistory = () => {
         </ScrollView>
       ) : (
         <View style={styles.noTransactionsContainer}>
-          <Typography weight={400} size={14} align="center">
+          <Typography weight={400} size={14} align="center" variant="body">
             {isFiltered
               ? "No transactions found for selected date range"
               : "No transactions yet — your wallet's chilling 😎"}
@@ -170,8 +183,15 @@ const TransactionHistory = () => {
         onRequestClose={() => setShowDateFilter(false)}
       >
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Typography weight={600} size={18} marginBottom={20}>
+          <View
+            style={[styles.modalContent, { backgroundColor: theme.surface }]}
+          >
+            <Typography
+              weight={600}
+              size={18}
+              marginBottom={20}
+              variant="heading"
+            >
               Filter by Date Range
             </Typography>
 
@@ -189,20 +209,23 @@ const TransactionHistory = () => {
 
             <View style={styles.modalButtons}>
               <TouchableOpacity
-                style={styles.cancelModalButton}
+                style={[
+                  styles.cancelModalButton,
+                  { backgroundColor: theme.backgroundSecondary },
+                ]}
                 onPress={() => setShowDateFilter(false)}
               >
-                <Typography color="#666" weight={500}>
+                <Typography color={theme.textSecondary} weight={500}>
                   Cancel
                 </Typography>
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={styles.applyButton}
+                style={[styles.applyButton, { backgroundColor: theme.primary }]}
                 onPress={handleFilterByDate}
                 disabled={filterByDateMutation.isPending}
               >
-                <Typography color="#fff" weight={500}>
+                <Typography color={theme.textInverse} weight={500}>
                   {filterByDateMutation.isPending
                     ? "Filtering..."
                     : "Apply Filter"}
@@ -237,20 +260,16 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   filterButton: {
-    backgroundColor: "#F0EDFF",
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#8C78F2",
   },
   clearButton: {
-    backgroundColor: "#FFE6E6",
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#d43d49",
   },
   scrollView: {
     width: "90%",
@@ -273,7 +292,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalContent: {
-    backgroundColor: "#fff",
     borderRadius: 20,
     padding: 24,
     width: "90%",
@@ -287,14 +305,12 @@ const styles = StyleSheet.create({
   },
   cancelModalButton: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
     paddingVertical: 12,
     borderRadius: 8,
     alignItems: "center",
   },
   applyButton: {
     flex: 1,
-    backgroundColor: "#8C78F2",
     paddingVertical: 12,
     borderRadius: 8,
     alignItems: "center",
